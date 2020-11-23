@@ -1,0 +1,52 @@
+{
+  "name": "sapper-rollup-sass-bulma",
+  "description": "A copy of the official Sapper/Svelte template of 10102020 -- DD/MM/YYYY, with aditional configuration in order to compile Sass and Scss directly from components and may be later Bulma itself",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "sapper dev",
+    "build": "sapper build --legacy",
+    "export": "sapper export --legacy",
+    "start": "node __sapper__/build",
+    "cy:run": "cypress run",
+    "cy:open": "cypress open",
+    "test": "run-p --race dev cy:run",
+    "css-build": "node-sass --omit-source-map-url static/style.scss static/style.css",
+    "css-watch": "yarn run css-build -- --watch"
+  },
+  "dependencies": {
+    "@creativebulma/bulma-tooltip": "^1.2.0",
+    "aos": "^2.3.4",
+    "bulma-helpers": "^0.3.12",
+    "bulma-pageloader": "^0.3.0",
+    "compression": "^1.7.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "feather-icons": "^4.28.0",
+    "polka": "next",
+    "sirv": "^0.4.0",
+    "socket.io": "^3.0.3",
+    "socket.io-client": "^3.0.3",
+    "tiny-slider": "^2.9.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/runtime": "^7.0.0",
+    "@rollup/plugin-babel": "^5.0.0",
+    "@rollup/plugin-commonjs": "^12.0.0",
+    "@rollup/plugin-node-resolve": "^8.0.0",
+    "@rollup/plugin-replace": "^2.2.0",
+    "autoprefixer": "^9.8.0",
+    "bulma": "^0.9.1",
+    "node-sass": "^4.14.1",
+    "npm-run-all": "^4.1.5",
+    "rollup": "^2.13.0",
+    "rollup-plugin-svelte": "^5.0.1",
+    "rollup-plugin-terser": "^5.3.0",
+    "sapper": "^0.27.0",
+    "svelte": "^3.0.0",
+    "svelte-preprocess": "^4.6.1"
+  }
+}
