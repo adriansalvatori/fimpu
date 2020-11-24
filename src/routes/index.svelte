@@ -11,10 +11,6 @@
 <script>
 	import { goto } from '@sapper/app' //Redirecter
 
-	import io from 'socket.io-client';
-
-	let socket = io()
-
 	const preload = () => { //Toggle Preloader
 		document.querySelector('#preloader').classList.toggle('is-active') 
 	}	
@@ -67,6 +63,10 @@
 									<button type="submit" class="button is-primary is-rounded is-outlined">
 										<span><i data-feather="user"></i></span>
 										<span>Entrar Ahora</span>
+									</button>
+									<button type="submit" class="button is-primary is-rounded is-outlined">
+										<span><i data-feather="user"></i></span>
+										<span>Regístrate</span>
 									</button>
 								</div>
 							</form>

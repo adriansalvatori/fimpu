@@ -6,7 +6,6 @@
     }
 
     .controls .button  {
-        background: white; 
         margin-bottom: 1vh; 
         width: 100%;
         display: flex;
@@ -34,15 +33,15 @@
         <div class="container">
             <div class="columns controls">
                 <div class="column is-2">
-                    <a href="/medios/mintic" class="button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio MinTIC</span></a>
-                    <a href="/medios/rtvc" class="button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio RTVC</span></a>
+                    <a href="/medios/mintic" class="button is-rounded is-primary is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio MinTIC</span></a>
+                    <a href="/medios/rtvc" class="button is-rounded is-primary is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio RTVC</span></a>
                 </div>
                 <div class="column is-3 is-offset-7">
-                    <a href="/medios/canal-capital" class="button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio Canal Capital</span></a>
-                    <a href="/medios/telecaribe" class="button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio Canal Telecaribe</span></a>
-                    <a href="/medios/canal-13" class="button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio Canal Trece</span></a>
-                    <a href="/medios/tro" class="button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio Canal TRO</span></a>
-                    <a href="/medios/teleislas" class="button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio Canal Teleislas</span></a>
+                    <a href="/medios/canal-capital" class="button is-rounded is-primary is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio Canal Capital</span></a>
+                    <a href="/medios/telecaribe" class="button is-rounded is-primary is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio Canal Telecaribe</span></a>
+                    <a href="/medios/canal-13" class="button is-rounded is-primary is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio Canal Trece</span></a>
+                    <a href="/medios/tro" class="button is-rounded is-primary is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio Canal TRO</span></a>
+                    <a href="/medios/teleislas" class="button is-rounded is-primary is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio Canal Teleislas</span></a>
                 </div>
             </div>
         </div>

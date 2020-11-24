@@ -5,6 +5,7 @@
 	import feather from 'feather-icons'
 	
 	export let segment;
+	
 
 	/**
 	 * Iniciamos el Preloader
@@ -33,6 +34,10 @@
 
 <style global lang="sass">
 </style>
+
+<svelte:head>
+	<script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+</svelte:head>
 
 <div id="preloader" class="pageloader is-active"><span class="title">FIMPU 2020</span></div>
 <Nav {segment} />

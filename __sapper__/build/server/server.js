@@ -3,12 +3,13 @@
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var sirv = _interopDefault(require('sirv'));
-var express = _interopDefault(require('express'));
+var polka = _interopDefault(require('polka'));
 var compression = _interopDefault(require('compression'));
 var fs = _interopDefault(require('fs'));
 var path = _interopDefault(require('path'));
 var feather = _interopDefault(require('feather-icons'));
-var io$1 = _interopDefault(require('socket.io-client'));
+var Chart = _interopDefault(require('chart.js'));
+var Player = _interopDefault(require('@vimeo/player'));
 var Stream = _interopDefault(require('stream'));
 var http = _interopDefault(require('http'));
 var Url = _interopDefault(require('url'));
@@ -20,15 +21,17 @@ const medios = [
     title: 'RTVC',
     slug: 'rtvc',
     type:'a',
+    website:'https://www.rtvc.gov.co',
     background: 'rtvc-stand.jpg',
     pdf:'teleislas.pdf',
     gallery: ['rtvc-gallery-1.jpg', 'rtvc-gallery-2.jpg', 'rtvc-gallery-3.jpg', 'rtvc-gallery-4.jpg', 'rtvc-gallery-5.jpg', 'rtvc-gallery-6.jpg', 'rtvc-gallery-7.jpg', 'rtvc-gallery-8.jpg', 'rtvc-gallery-9.jpg', 'rtvc-gallery-10.jpg',  'rtvc-gallery-12.jpeg', 'rtvc-gallery-13.jpg',  'rtvc-gallery-16.jpg', 'rtvc-gallery-17.jpg'],
-    iframe: 'https://www.youtube.com/embed/6ET3kicZzNQ',
+    iframe: 'https://https://www.youtube.com/embed/6ET3kicZzNQ',
     chat:true
 }, {
     title: 'MinTIC',
     slug: 'mintic',
     type:'a',
+    website:'https://www.mintic.gov.co',
     background: 'mintic-stand.jpg',
     pdf:'',
     gallery: ['rtvc-gallery-1.jpg', 'rtvc-gallery-2.jpg', 'rtvc-gallery-3.jpg', 'rtvc-gallery-4.jpg', 'rtvc-gallery-5.jpg', 'rtvc-gallery-6.jpg', 'rtvc-gallery-7.jpg', 'rtvc-gallery-8.jpg', 'rtvc-gallery-9.jpg', 'rtvc-gallery-10.jpg',  'rtvc-gallery-12.jpeg', 'rtvc-gallery-13.jpg',  'rtvc-gallery-16.jpg', 'rtvc-gallery-17.jpg'],
@@ -37,6 +40,7 @@ const medios = [
 }, {
     title: 'Canal 13',
     slug: 'canal-13',
+    website: 'https://www.canaltrece.com.co ',
     type:'b',
     background: '13-stand.jpg',
     pdf:'',
@@ -45,6 +49,7 @@ const medios = [
 }, {
     title: 'Telecaribe',
     slug: 'telecaribe',
+    website: 'https://www.telecaribe.co',
     type:'b',
     background: 'telecaribe-stand.jpg',
     pdf:'',
@@ -53,6 +58,7 @@ const medios = [
 }, {
     title: 'TRO',
     slug: 'tro',
+    website: 'https://www.canaltro.com',
     type:'b',
     background: 'tro-stand.jpg',
     pdf:'',
@@ -62,6 +68,7 @@ const medios = [
     title: 'Teleíslas',
     slug: 'teleislas',
     type:'b',
+    website: 'https://www.teleislas.com.co',
     background: 'teleislas-stand.jpg',
     pdf:'teleislas.pdf',
     gallery: ['rtvc-gallery-1.jpg', 'rtvc-gallery-2.jpg', 'rtvc-gallery-3.jpg', 'rtvc-gallery-4.jpg', 'rtvc-gallery-5.jpg', 'rtvc-gallery-6.jpg', 'rtvc-gallery-7.jpg', 'rtvc-gallery-8.jpg', 'rtvc-gallery-9.jpg', 'rtvc-gallery-10.jpg',  'rtvc-gallery-12.jpeg', 'rtvc-gallery-13.jpg',  'rtvc-gallery-16.jpg', 'rtvc-gallery-17.jpg'],
@@ -69,6 +76,7 @@ const medios = [
 }, {
     title: 'Canal Capital',
     slug: 'canal-capital',
+    website: 'https://www.canalcapital.gov.co',
     type:'b',
     background: 'canal-capital-stand.jpg',
     pdf:'',
@@ -113,9 +121,19 @@ const salas = [
 {
     title: 'Auditorio',
     slug: 'auditorio',
-    iframe: 'https://www.youtube.com/embed/onaXveWIqhA',
+    iframe: 'https://vimeo.com/event/494357/embed',
     chat:true
-}
+},{
+    title: 'Sala 1',
+    slug: 'sala-1',
+    iframe: 'https://vimeo.com/event/494357/embed',
+    chat:true
+},{
+    title: 'Sala 2',
+    slug: 'sala-2',
+    iframe: 'https://vimeo.com/event/494357/embed',
+    chat:true
+},
 ];
 
 const lookup$1 = new Map();
@@ -148,149 +166,6 @@ function get$1(req, res, next) {
 var route_1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
     get: get$1
-});
-
-// Ordinarily, you'd generate this data from markdown files in your
-// repo, or fetch them from a database of some kind. But in order to
-// avoid unnecessary dependencies in the starter template, and in the
-// service of obviousness, we're just going to leave it here.
-
-// This file is called `_posts.js` rather than `posts.js`, because
-// we don't want to create an `/blog/posts` route — the leading
-// underscore tells Sapper not to do that.
-
-const posts = [
-	{
-		title: 'What is Sapper?',
-		slug: 'what-is-sapper',
-		html: `
-			<p>First, you have to know what <a href='https://svelte.dev'>Svelte</a> is. Svelte is a UI framework with a bold new idea: rather than providing a library that you write code with (like React or Vue, for example), it's a compiler that turns your components into highly optimized vanilla JavaScript. If you haven't already read the <a href='https://svelte.dev/blog/frameworks-without-the-framework'>introductory blog post</a>, you should!</p>
-
-			<p>Sapper is a Next.js-style framework (<a href='blog/how-is-sapper-different-from-next'>more on that here</a>) built around Svelte. It makes it embarrassingly easy to create extremely high performance web apps. Out of the box, you get:</p>
-
-			<ul>
-				<li>Code-splitting, dynamic imports and hot module replacement, powered by webpack</li>
-				<li>Server-side rendering (SSR) with client-side hydration</li>
-				<li>Service worker for offline support, and all the PWA bells and whistles</li>
-				<li>The nicest development experience you've ever had, or your money back</li>
-			</ul>
-
-			<p>It's implemented as Express middleware. Everything is set up and waiting for you to get started, but you keep complete control over the server, service worker, webpack config and everything else, so it's as flexible as you need it to be.</p>
-		`
-	},
-
-	{
-		title: 'How to use Sapper',
-		slug: 'how-to-use-sapper',
-		html: `
-			<h2>Step one</h2>
-			<p>Create a new project, using <a href='https://github.com/Rich-Harris/degit'>degit</a>:</p>
-
-			<pre><code>npx degit "sveltejs/sapper-template#rollup" my-app
-			cd my-app
-			npm install # or yarn!
-			npm run dev
-			</code></pre>
-
-			<h2>Step two</h2>
-			<p>Go to <a href='http://localhost:3000'>localhost:3000</a>. Open <code>my-app</code> in your editor. Edit the files in the <code>src/routes</code> directory or add new ones.</p>
-
-			<h2>Step three</h2>
-			<p>...</p>
-
-			<h2>Step four</h2>
-			<p>Resist overdone joke formats.</p>
-		`
-	},
-
-	{
-		title: 'Why the name?',
-		slug: 'why-the-name',
-		html: `
-			<p>In war, the soldiers who build bridges, repair roads, clear minefields and conduct demolitions — all under combat conditions — are known as <em>sappers</em>.</p>
-
-			<p>For web developers, the stakes are generally lower than those for combat engineers. But we face our own hostile environment: underpowered devices, poor network connections, and the complexity inherent in front-end engineering. Sapper, which is short for <strong>S</strong>velte <strong>app</strong> mak<strong>er</strong>, is your courageous and dutiful ally.</p>
-		`
-	},
-
-	{
-		title: 'How is Sapper different from Next.js?',
-		slug: 'how-is-sapper-different-from-next',
-		html: `
-			<p><a href='https://github.com/zeit/next.js'>Next.js</a> is a React framework from <a href='https://vercel.com/'>Vercel</a>, and is the inspiration for Sapper. There are a few notable differences, however:</p>
-
-			<ul>
-				<li>It's powered by <a href='https://svelte.dev'>Svelte</a> instead of React, so it's faster and your apps are smaller</li>
-				<li>Instead of route masking, we encode route parameters in filenames. For example, the page you're looking at right now is <code>src/routes/blog/[slug].svelte</code></li>
-				<li>As well as pages (Svelte components, which render on server or client), you can create <em>server routes</em> in your <code>routes</code> directory. These are just <code>.js</code> files that export functions corresponding to HTTP methods, and receive Express <code>request</code> and <code>response</code> objects as arguments. This makes it very easy to, for example, add a JSON API such as the one <a href='blog/how-is-sapper-different-from-next.json'>powering this very page</a></li>
-				<li>Links are just <code>&lt;a&gt;</code> elements, rather than framework-specific <code>&lt;Link&gt;</code> components. That means, for example, that <a href='blog/how-can-i-get-involved'>this link right here</a>, despite being inside a blob of HTML, works with the router as you'd expect.</li>
-			</ul>
-		`
-	},
-
-	{
-		title: 'How can I get involved?',
-		slug: 'how-can-i-get-involved',
-		html: `
-			<p>We're so glad you asked! Come on over to the <a href='https://github.com/sveltejs/svelte'>Svelte</a> and <a href='https://github.com/sveltejs/sapper'>Sapper</a> repos, and join us in the <a href='https://svelte.dev/chat'>Discord chatroom</a>. Everyone is welcome, especially you!</p>
-		`
-	}
-];
-
-posts.forEach(post => {
-	post.html = post.html.replace(/^\t{3}/gm, '');
-});
-
-const contents = JSON.stringify(posts.map(post => {
-	return {
-		title: post.title,
-		slug: post.slug
-	};
-}));
-
-function get$2(req, res) {
-	res.writeHead(200, {
-		'Content-Type': 'application/json'
-	});
-
-	res.end(contents);
-}
-
-var route_2 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    get: get$2
-});
-
-const lookup$2 = new Map();
-posts.forEach(post => {
-	lookup$2.set(post.slug, JSON.stringify(post));
-});
-
-function get$3(req, res, next) {
-	// the `slug` parameter is available because
-	// this file is called [slug].json.js
-	const { slug } = req.params;
-
-	if (lookup$2.has(slug)) {
-		res.writeHead(200, {
-			'Content-Type': 'application/json'
-		});
-
-		res.end(lookup$2.get(slug));
-	} else {
-		res.writeHead(404, {
-			'Content-Type': 'application/json'
-		});
-
-		res.end(JSON.stringify({
-			message: `Not found`
-		}));
-	}
-}
-
-var route_3 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    get: get$3
 });
 
 function noop() { }
@@ -507,6 +382,8 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, $$slots) => 
 
 
 
+${($$result.head += `<script src="${"https://cdn.socket.io/socket.io-3.0.1.min.js"}"></script>`, "")}
+
 <div id="${"preloader"}" class="${"pageloader is-active"}"><span class="${"title"}">FIMPU 2020</span></div>
 ${validate_component(Nav, "Nav").$$render($$result, { segment }, {}, {})}
 
@@ -625,11 +502,10 @@ stores.session.subscribe(async value => {
 
 const css$1 = {
 	code: "#login.svelte-1ib89vz .is-overlay.svelte-1ib89vz{background-position:bottom !important;filter:blur(8px);-webkit-filter:blur(8px)}",
-	map: "{\"version\":3,\"file\":\"index.svelte\",\"sources\":[\"index.svelte\"],\"sourcesContent\":[\"<style lang=\\\"scss\\\">#login .is-overlay {\\n  background-position: bottom !important;\\n  filter: blur(8px);\\n  -webkit-filter: blur(8px); }</style>\\n\\n<script>\\n\\timport { goto } from '@sapper/app' //Redirecter\\n\\n\\timport io from 'socket.io-client';\\n\\n\\tlet socket = io()\\n\\n\\tconst preload = () => { //Toggle Preloader\\n\\t\\tdocument.querySelector('#preloader').classList.toggle('is-active') \\n\\t}\\t\\n\\n\\tconst loginTrigger = (e) => { //Trigger Login\\n\\t\\te.preventDefault()\\n\\t\\tpreload() //Trigger Preloader\\n\\t\\tconst user = document.querySelector('#email').value\\n\\t\\tconst password = document.querySelector('#password').value\\n\\t\\tconsole.log(user,password)\\n\\t\\t/**\\n\\t\\t * Here we Await for the Api to validate\\n\\t\\t*/\\n\\t\\tsetTimeout(() => {\\n\\t\\t\\tgoto('/lobby') //Redirect\\n\\t\\t\\tpreload() //Trigger Preloader\\n\\t\\t}, 1000);\\n\\t}\\n</script>\\n\\n<svelte:head>\\n\\t<title>FIMPU 2020</title>\\n</svelte:head>\\n\\n<div id=\\\"login\\\" class=\\\"hero is-fullheight is-relative is-clipped\\\">\\n\\t<div class=\\\"is-overlay\\\">\\n\\t\\t<div class=\\\"hero is-fullheight\\\" style=\\\"background: url('lobby.jpg');\\\"></div>\\n\\t</div>\\n\\t<div class=\\\"hero-body\\\">\\n\\t\\t<div class=\\\"container\\\">\\n\\t\\t\\t<div class=\\\"columns\\\">\\n\\t\\t\\t\\t<div class=\\\"column is-5\\\">\\n\\t\\t\\t\\t\\t<div class=\\\"card box\\\">\\n\\t\\t\\t\\t\\t\\t<div class=\\\"card-content has-text-centered\\\">\\n\\t\\t\\t\\t\\t\\t\\t<img src=\\\"logo-header.svg\\\" class=\\\"has-margin-bottom-20\\\" alt=\\\"Logo FIMPU\\\">\\n\\t\\t\\t\\t\\t\\t\\t<form on:submit={loginTrigger} action=\\\"\\\" class=\\\"form\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t<div class=\\\"field\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<input id=\\\"email\\\" required type=\\\"email\\\" placeholder=\\\"Su correo electrónico\\\" class=\\\"input is-rounded\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t<div class=\\\"field\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<input id=\\\"password\\\" required type=\\\"password\\\" placeholder=\\\"Su clave de acceso\\\" class=\\\"input is-rounded\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t<div class=\\\"field\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<label class=\\\"checkbox\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<input required type=\\\"checkbox\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\tAcepto los <a href=\\\"/terms\\\" class=\\\"link\\\">Términos y Condiciones</a>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</label>\\n\\t\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t<div class=\\\"field\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<button type=\\\"submit\\\" class=\\\"button is-primary is-rounded is-outlined\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<span><i data-feather=\\\"user\\\"></i></span>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<span>Entrar Ahora</span>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</button>\\n\\t\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t</form>\\n\\t\\t\\t\\t\\t\\t\\t<img src=\\\"membrete.svg\\\" class=\\\"has-margin-top-20\\\" alt=\\\"\\\">\\n\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t</div>\\n\\t\\t\\t</div>\\n\\t\\t</div>\\n\\t</div>\\n</div>\"],\"names\":[],\"mappings\":\"AAAmB,qBAAM,CAAC,WAAW,eAAC,CAAC,AACrC,mBAAmB,CAAE,MAAM,CAAC,UAAU,CACtC,MAAM,CAAE,KAAK,GAAG,CAAC,CACjB,cAAc,CAAE,KAAK,GAAG,CAAC,AAAE,CAAC\"}"
+	map: "{\"version\":3,\"file\":\"index.svelte\",\"sources\":[\"index.svelte\"],\"sourcesContent\":[\"<style lang=\\\"scss\\\">#login .is-overlay {\\n  background-position: bottom !important;\\n  filter: blur(8px);\\n  -webkit-filter: blur(8px); }</style>\\n\\n<script>\\n\\timport { goto } from '@sapper/app' //Redirecter\\n\\n\\tconst preload = () => { //Toggle Preloader\\n\\t\\tdocument.querySelector('#preloader').classList.toggle('is-active') \\n\\t}\\t\\n\\n\\tconst loginTrigger = (e) => { //Trigger Login\\n\\t\\te.preventDefault()\\n\\t\\tpreload() //Trigger Preloader\\n\\t\\tconst user = document.querySelector('#email').value\\n\\t\\tconst password = document.querySelector('#password').value\\n\\t\\tconsole.log(user,password)\\n\\t\\t/**\\n\\t\\t * Here we Await for the Api to validate\\n\\t\\t*/\\n\\t\\tsetTimeout(() => {\\n\\t\\t\\tgoto('/lobby') //Redirect\\n\\t\\t\\tpreload() //Trigger Preloader\\n\\t\\t}, 1000);\\n\\t}\\n</script>\\n\\n<svelte:head>\\n\\t<title>FIMPU 2020</title>\\n</svelte:head>\\n\\n<div id=\\\"login\\\" class=\\\"hero is-fullheight is-relative is-clipped\\\">\\n\\t<div class=\\\"is-overlay\\\">\\n\\t\\t<div class=\\\"hero is-fullheight\\\" style=\\\"background: url('lobby.jpg');\\\"></div>\\n\\t</div>\\n\\t<div class=\\\"hero-body\\\">\\n\\t\\t<div class=\\\"container\\\">\\n\\t\\t\\t<div class=\\\"columns\\\">\\n\\t\\t\\t\\t<div class=\\\"column is-5\\\">\\n\\t\\t\\t\\t\\t<div class=\\\"card box\\\">\\n\\t\\t\\t\\t\\t\\t<div class=\\\"card-content has-text-centered\\\">\\n\\t\\t\\t\\t\\t\\t\\t<img src=\\\"logo-header.svg\\\" class=\\\"has-margin-bottom-20\\\" alt=\\\"Logo FIMPU\\\">\\n\\t\\t\\t\\t\\t\\t\\t<form on:submit={loginTrigger} action=\\\"\\\" class=\\\"form\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t<div class=\\\"field\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<input id=\\\"email\\\" required type=\\\"email\\\" placeholder=\\\"Su correo electrónico\\\" class=\\\"input is-rounded\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t<div class=\\\"field\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<input id=\\\"password\\\" required type=\\\"password\\\" placeholder=\\\"Su clave de acceso\\\" class=\\\"input is-rounded\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t<div class=\\\"field\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<label class=\\\"checkbox\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<input required type=\\\"checkbox\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\tAcepto los <a href=\\\"/terms\\\" class=\\\"link\\\">Términos y Condiciones</a>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</label>\\n\\t\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t<div class=\\\"field\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<button type=\\\"submit\\\" class=\\\"button is-primary is-rounded is-outlined\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<span><i data-feather=\\\"user\\\"></i></span>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<span>Entrar Ahora</span>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</button>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<button type=\\\"submit\\\" class=\\\"button is-primary is-rounded is-outlined\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<span><i data-feather=\\\"user\\\"></i></span>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<span>Regístrate</span>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</button>\\n\\t\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t</form>\\n\\t\\t\\t\\t\\t\\t\\t<img src=\\\"membrete.svg\\\" class=\\\"has-margin-top-20\\\" alt=\\\"\\\">\\n\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t</div>\\n\\t\\t\\t</div>\\n\\t\\t</div>\\n\\t</div>\\n</div>\"],\"names\":[],\"mappings\":\"AAAmB,qBAAM,CAAC,WAAW,eAAC,CAAC,AACrC,mBAAmB,CAAE,MAAM,CAAC,UAAU,CACtC,MAAM,CAAE,KAAK,GAAG,CAAC,CACjB,cAAc,CAAE,KAAK,GAAG,CAAC,AAAE,CAAC\"}"
 };
 
 const Routes = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
-	let socket = io$1();
 
 	$$result.css.add(css$1);
 
@@ -642,28 +518,30 @@ const Routes = create_ssr_component(($$result, $$props, $$bindings, $$slots) => 
 								<div class="${"field"}"><label class="${"checkbox"}"><input required type="${"checkbox"}">
 										Acepto los <a href="${"/terms"}" class="${"link"}">Términos y Condiciones</a></label></div>
 								<div class="${"field"}"><button type="${"submit"}" class="${"button is-primary is-rounded is-outlined"}"><span><i data-feather="${"user"}"></i></span>
-										<span>Entrar Ahora</span></button></div></form>
+										<span>Entrar Ahora</span></button>
+									<button type="${"submit"}" class="${"button is-primary is-rounded is-outlined"}"><span><i data-feather="${"user"}"></i></span>
+										<span>Regístrate</span></button></div></form>
 							<img src="${"membrete.svg"}" class="${"has-margin-top-20"}" alt="${""}"></div></div></div></div></div></div></div>`;
 });
 
 /* src\routes\medios\index.svelte generated by Svelte v3.23.0 */
 
 const css$2 = {
-	code: "#lobby-medios.svelte-8kaxop.svelte-8kaxop{background-position:bottom !important;background-size:cover !important;background-repeat:no-repeat !important}.controls.svelte-8kaxop .button.svelte-8kaxop{background:white;margin-bottom:1vh;width:100%;display:flex;justify-content:space-between}.button#volver.svelte-8kaxop.svelte-8kaxop{background:linear-gradient(71deg, #a100e0 0%, #e73c29 100%)}.button#volver.svelte-8kaxop .icon.svelte-8kaxop{background:white;color:black;height:50px;width:50px;margin-left:-25px;margin-right:20px}",
-	map: "{\"version\":3,\"file\":\"index.svelte\",\"sources\":[\"index.svelte\"],\"sourcesContent\":[\"<style lang=\\\"scss\\\">#lobby-medios {\\n  background-position: bottom !important;\\n  background-size: cover !important;\\n  background-repeat: no-repeat !important; }\\n\\n.controls .button {\\n  background: white;\\n  margin-bottom: 1vh;\\n  width: 100%;\\n  display: flex;\\n  justify-content: space-between; }\\n\\n.button#volver {\\n  background: linear-gradient(71deg, #a100e0 0%, #e73c29 100%); }\\n  .button#volver .icon {\\n    background: white;\\n    color: black;\\n    height: 50px;\\n    width: 50px;\\n    margin-left: -25px;\\n    margin-right: 20px; }</style>\\r\\n\\r\\n<div id=\\\"lobby-medios\\\" style=\\\"background: url('lobby-stands.jpg');\\\" class=\\\"hero is-fullheight is-relative is-primary is-clipped\\\">\\r\\n\\t<div class=\\\"hero-body\\\">\\r\\n        <div class=\\\"container\\\">\\r\\n            <div class=\\\"columns controls\\\">\\r\\n                <div class=\\\"column is-2\\\">\\r\\n                    <a href=\\\"/medios/mintic\\\" class=\\\"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Espacio MinTIC</span></a>\\r\\n                    <a href=\\\"/medios/rtvc\\\" class=\\\"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Espacio RTVC</span></a>\\r\\n                </div>\\r\\n                <div class=\\\"column is-3 is-offset-7\\\">\\r\\n                    <a href=\\\"/medios/canal-capital\\\" class=\\\"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Espacio Canal Capital</span></a>\\r\\n                    <a href=\\\"/medios/telecaribe\\\" class=\\\"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Espacio Canal Telecaribe</span></a>\\r\\n                    <a href=\\\"/medios/canal-13\\\" class=\\\"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Espacio Canal Trece</span></a>\\r\\n                    <a href=\\\"/medios/tro\\\" class=\\\"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Espacio Canal TRO</span></a>\\r\\n                    <a href=\\\"/medios/teleislas\\\" class=\\\"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Espacio Canal Teleislas</span></a>\\r\\n                </div>\\r\\n            </div>\\r\\n        </div>\\r\\n    </div>\\r\\n    <div class=\\\"hero-footer\\\">\\r\\n        <div class=\\\"container\\\">\\r\\n            <a href=\\\"/lobby\\\" id=\\\"volver\\\" class=\\\"button is-primary has-margin-bottom-50\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"chevrons-left\\\"></i></span><span>Volver al Lobby</span></a>\\r\\n        </div>\\r\\n    </div>\\r\\n</div>\"],\"names\":[],\"mappings\":\"AAAmB,aAAa,4BAAC,CAAC,AAChC,mBAAmB,CAAE,MAAM,CAAC,UAAU,CACtC,eAAe,CAAE,KAAK,CAAC,UAAU,CACjC,iBAAiB,CAAE,SAAS,CAAC,UAAU,AAAE,CAAC,AAE5C,uBAAS,CAAC,OAAO,cAAC,CAAC,AACjB,UAAU,CAAE,KAAK,CACjB,aAAa,CAAE,GAAG,CAClB,KAAK,CAAE,IAAI,CACX,OAAO,CAAE,IAAI,CACb,eAAe,CAAE,aAAa,AAAE,CAAC,AAEnC,OAAO,OAAO,4BAAC,CAAC,AACd,UAAU,CAAE,gBAAgB,KAAK,CAAC,CAAC,OAAO,CAAC,EAAE,CAAC,CAAC,OAAO,CAAC,IAAI,CAAC,AAAE,CAAC,AAC/D,OAAO,qBAAO,CAAC,KAAK,cAAC,CAAC,AACpB,UAAU,CAAE,KAAK,CACjB,KAAK,CAAE,KAAK,CACZ,MAAM,CAAE,IAAI,CACZ,KAAK,CAAE,IAAI,CACX,WAAW,CAAE,KAAK,CAClB,YAAY,CAAE,IAAI,AAAE,CAAC\"}"
+	code: "#lobby-medios.svelte-1a9wffv.svelte-1a9wffv{background-position:bottom !important;background-size:cover !important;background-repeat:no-repeat !important}.controls.svelte-1a9wffv .button.svelte-1a9wffv{margin-bottom:1vh;width:100%;display:flex;justify-content:space-between}.button#volver.svelte-1a9wffv.svelte-1a9wffv{background:linear-gradient(71deg, #a100e0 0%, #e73c29 100%)}.button#volver.svelte-1a9wffv .icon.svelte-1a9wffv{background:white;color:black;height:50px;width:50px;margin-left:-25px;margin-right:20px}",
+	map: "{\"version\":3,\"file\":\"index.svelte\",\"sources\":[\"index.svelte\"],\"sourcesContent\":[\"<style lang=\\\"scss\\\">#lobby-medios {\\n  background-position: bottom !important;\\n  background-size: cover !important;\\n  background-repeat: no-repeat !important; }\\n\\n.controls .button {\\n  margin-bottom: 1vh;\\n  width: 100%;\\n  display: flex;\\n  justify-content: space-between; }\\n\\n.button#volver {\\n  background: linear-gradient(71deg, #a100e0 0%, #e73c29 100%); }\\n  .button#volver .icon {\\n    background: white;\\n    color: black;\\n    height: 50px;\\n    width: 50px;\\n    margin-left: -25px;\\n    margin-right: 20px; }</style>\\r\\n\\r\\n<div id=\\\"lobby-medios\\\" style=\\\"background: url('lobby-stands.jpg');\\\" class=\\\"hero is-fullheight is-relative is-primary is-clipped\\\">\\r\\n\\t<div class=\\\"hero-body\\\">\\r\\n        <div class=\\\"container\\\">\\r\\n            <div class=\\\"columns controls\\\">\\r\\n                <div class=\\\"column is-2\\\">\\r\\n                    <a href=\\\"/medios/mintic\\\" class=\\\"button is-rounded is-primary is-uppercase has-text-weight-bold is-control\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Espacio MinTIC</span></a>\\r\\n                    <a href=\\\"/medios/rtvc\\\" class=\\\"button is-rounded is-primary is-uppercase has-text-weight-bold is-control\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Espacio RTVC</span></a>\\r\\n                </div>\\r\\n                <div class=\\\"column is-3 is-offset-7\\\">\\r\\n                    <a href=\\\"/medios/canal-capital\\\" class=\\\"button is-rounded is-primary is-uppercase has-text-weight-bold is-control\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Espacio Canal Capital</span></a>\\r\\n                    <a href=\\\"/medios/telecaribe\\\" class=\\\"button is-rounded is-primary is-uppercase has-text-weight-bold is-control\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Espacio Canal Telecaribe</span></a>\\r\\n                    <a href=\\\"/medios/canal-13\\\" class=\\\"button is-rounded is-primary is-uppercase has-text-weight-bold is-control\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Espacio Canal Trece</span></a>\\r\\n                    <a href=\\\"/medios/tro\\\" class=\\\"button is-rounded is-primary is-uppercase has-text-weight-bold is-control\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Espacio Canal TRO</span></a>\\r\\n                    <a href=\\\"/medios/teleislas\\\" class=\\\"button is-rounded is-primary is-uppercase has-text-weight-bold is-control\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Espacio Canal Teleislas</span></a>\\r\\n                </div>\\r\\n            </div>\\r\\n        </div>\\r\\n    </div>\\r\\n    <div class=\\\"hero-footer\\\">\\r\\n        <div class=\\\"container\\\">\\r\\n            <a href=\\\"/lobby\\\" id=\\\"volver\\\" class=\\\"button is-primary has-margin-bottom-50\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"chevrons-left\\\"></i></span><span>Volver al Lobby</span></a>\\r\\n        </div>\\r\\n    </div>\\r\\n</div>\"],\"names\":[],\"mappings\":\"AAAmB,aAAa,8BAAC,CAAC,AAChC,mBAAmB,CAAE,MAAM,CAAC,UAAU,CACtC,eAAe,CAAE,KAAK,CAAC,UAAU,CACjC,iBAAiB,CAAE,SAAS,CAAC,UAAU,AAAE,CAAC,AAE5C,wBAAS,CAAC,OAAO,eAAC,CAAC,AACjB,aAAa,CAAE,GAAG,CAClB,KAAK,CAAE,IAAI,CACX,OAAO,CAAE,IAAI,CACb,eAAe,CAAE,aAAa,AAAE,CAAC,AAEnC,OAAO,OAAO,8BAAC,CAAC,AACd,UAAU,CAAE,gBAAgB,KAAK,CAAC,CAAC,OAAO,CAAC,EAAE,CAAC,CAAC,OAAO,CAAC,IAAI,CAAC,AAAE,CAAC,AAC/D,OAAO,sBAAO,CAAC,KAAK,eAAC,CAAC,AACpB,UAAU,CAAE,KAAK,CACjB,KAAK,CAAE,KAAK,CACZ,MAAM,CAAE,IAAI,CACZ,KAAK,CAAE,IAAI,CACX,WAAW,CAAE,KAAK,CAClB,YAAY,CAAE,IAAI,AAAE,CAAC\"}"
 };
 
 const Medios = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
 	$$result.css.add(css$2);
 
-	return `<div id="${"lobby-medios"}" style="${"background: url('lobby-stands.jpg');"}" class="${"hero is-fullheight is-relative is-primary is-clipped svelte-8kaxop"}"><div class="${"hero-body"}"><div class="${"container"}"><div class="${"columns controls svelte-8kaxop"}"><div class="${"column is-2"}"><a href="${"/medios/mintic"}" class="${"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control svelte-8kaxop"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Espacio MinTIC</span></a>
-                    <a href="${"/medios/rtvc"}" class="${"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control svelte-8kaxop"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Espacio RTVC</span></a></div>
-                <div class="${"column is-3 is-offset-7"}"><a href="${"/medios/canal-capital"}" class="${"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control svelte-8kaxop"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Espacio Canal Capital</span></a>
-                    <a href="${"/medios/telecaribe"}" class="${"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control svelte-8kaxop"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Espacio Canal Telecaribe</span></a>
-                    <a href="${"/medios/canal-13"}" class="${"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control svelte-8kaxop"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Espacio Canal Trece</span></a>
-                    <a href="${"/medios/tro"}" class="${"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control svelte-8kaxop"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Espacio Canal TRO</span></a>
-                    <a href="${"/medios/teleislas"}" class="${"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control svelte-8kaxop"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Espacio Canal Teleislas</span></a></div></div></div></div>
-    <div class="${"hero-footer"}"><div class="${"container"}"><a href="${"/lobby"}" id="${"volver"}" class="${"button is-primary has-margin-bottom-50 svelte-8kaxop"}"><span class="${"icon is-small svelte-8kaxop"}"><i data-feather="${"chevrons-left"}"></i></span><span>Volver al Lobby</span></a></div></div></div>`;
+	return `<div id="${"lobby-medios"}" style="${"background: url('lobby-stands.jpg');"}" class="${"hero is-fullheight is-relative is-primary is-clipped svelte-1a9wffv"}"><div class="${"hero-body"}"><div class="${"container"}"><div class="${"columns controls svelte-1a9wffv"}"><div class="${"column is-2"}"><a href="${"/medios/mintic"}" class="${"button is-rounded is-primary is-uppercase has-text-weight-bold is-control svelte-1a9wffv"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Espacio MinTIC</span></a>
+                    <a href="${"/medios/rtvc"}" class="${"button is-rounded is-primary is-uppercase has-text-weight-bold is-control svelte-1a9wffv"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Espacio RTVC</span></a></div>
+                <div class="${"column is-3 is-offset-7"}"><a href="${"/medios/canal-capital"}" class="${"button is-rounded is-primary is-uppercase has-text-weight-bold is-control svelte-1a9wffv"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Espacio Canal Capital</span></a>
+                    <a href="${"/medios/telecaribe"}" class="${"button is-rounded is-primary is-uppercase has-text-weight-bold is-control svelte-1a9wffv"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Espacio Canal Telecaribe</span></a>
+                    <a href="${"/medios/canal-13"}" class="${"button is-rounded is-primary is-uppercase has-text-weight-bold is-control svelte-1a9wffv"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Espacio Canal Trece</span></a>
+                    <a href="${"/medios/tro"}" class="${"button is-rounded is-primary is-uppercase has-text-weight-bold is-control svelte-1a9wffv"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Espacio Canal TRO</span></a>
+                    <a href="${"/medios/teleislas"}" class="${"button is-rounded is-primary is-uppercase has-text-weight-bold is-control svelte-1a9wffv"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Espacio Canal Teleislas</span></a></div></div></div></div>
+    <div class="${"hero-footer"}"><div class="${"container"}"><a href="${"/lobby"}" id="${"volver"}" class="${"button is-primary has-margin-bottom-50 svelte-1a9wffv"}"><span class="${"icon is-small svelte-1a9wffv"}"><i data-feather="${"chevrons-left"}"></i></span><span>Volver al Lobby</span></a></div></div></div>`;
 });
 
 /* src\components\SlideShow.svelte generated by Svelte v3.23.0 */
@@ -700,8 +578,8 @@ const SlideShow = create_ssr_component(($$result, $$props, $$bindings, $$slots) 
 /* src\components\StandB.svelte generated by Svelte v3.23.0 */
 
 const css$4 = {
-	code: ".iframe-container.svelte-1z0yqic.svelte-1z0yqic{width:55vh;height:55vh;position:absolute;top:60%;left:47%;transform:translate(-50%, -50%)}.iframe-container.svelte-1z0yqic iframe.svelte-1z0yqic{width:100%;height:56%;overflow:hidden;border-radius:10px;box-shadow:0 0 60px rgba(0, 0, 0, 0.3)}.controls.svelte-1z0yqic .button.svelte-1z0yqic{background:white;font-weight:bold}.controls.svelte-1z0yqic .button.is-primary.is-outlined.svelte-1z0yqic{position:absolute;font-size:1.8vh}.controls.svelte-1z0yqic .button.is-primary.is-outlined.has-iframe.svelte-1z0yqic{top:-8vh;right:0}.controls.svelte-1z0yqic .button.is-primary.is-outlined.has-gallery.svelte-1z0yqic{bottom:30vh;left:15vw}.controls.svelte-1z0yqic .button.is-primary.is-outlined.has-pdf.svelte-1z0yqic{bottom:30vh;right:15vw}",
-	map: "{\"version\":3,\"file\":\"StandB.svelte\",\"sources\":[\"StandB.svelte\"],\"sourcesContent\":[\"<script>\\r\\n    import SlideShow from \\\"./SlideShow.svelte\\\"\\r\\n    export let stand\\r\\n    \\r\\n    let images = stand.gallery\\r\\n    const openGallery = () => {\\r\\n        document.querySelector('#galeria-interactiva').classList.toggle('is-active')\\r\\n    }\\r\\n</script>\\r\\n\\r\\n<style lang=\\\"scss\\\">.iframe-container {\\n  width: 55vh;\\n  height: 55vh;\\n  position: absolute;\\n  top: 60%;\\n  left: 47%;\\n  transform: translate(-50%, -50%); }\\n  .iframe-container iframe {\\n    width: 100%;\\n    height: 56%;\\n    overflow: hidden;\\n    border-radius: 10px;\\n    box-shadow: 0 0 60px rgba(0, 0, 0, 0.3); }\\n\\n.controls .button {\\n  background: white;\\n  font-weight: bold; }\\n  .controls .button.is-primary.is-outlined {\\n    position: absolute;\\n    font-size: 1.8vh; }\\n    .controls .button.is-primary.is-outlined.has-iframe {\\n      top: -8vh;\\n      right: 0; }\\n    .controls .button.is-primary.is-outlined.has-gallery {\\n      bottom: 30vh;\\n      left: 15vw; }\\n    .controls .button.is-primary.is-outlined.has-pdf {\\n      bottom: 30vh;\\n      right: 15vw; }</style>\\r\\n\\r\\n<div class=\\\"controls\\\">\\r\\n    <!-- Video -- Conócenos -->\\r\\n    <div class=\\\"iframe-container\\\">\\r\\n        <button class=\\\"button is-rounded is-primary is-outlined is-uppercase has-iframe\\\">Conócenos</button>\\r\\n        <iframe title=\\\"{stand.title}\\\" src=\\\"{stand.iframe}\\\" frameborder=\\\"0\\\" allow=\\\"autoplay; fullscreen\\\"\\r\\n            allowfullscreen></iframe>\\r\\n    </div>\\r\\n\\r\\n    <!-- Galería -->\\r\\n\\r\\n    <div class=\\\"gallery-trigger\\\">\\r\\n        <button on:click={openGallery} class=\\\"button is-rounded is-primary is-outlined is-uppercase has-gallery\\\">Galería</button>\\r\\n    </div>\\r\\n    <SlideShow {images}/>\\r\\n\\r\\n    <!-- PDF -- Sobre Nosotros -->\\r\\n    {#if stand.pdf}\\r\\n    <div class=\\\"pdf-trigger\\\">\\r\\n        <a target=\\\"_blank\\\" href={stand.pdf} class=\\\"button is-rounded is-primary is-outlined is-uppercase has-pdf\\\">Sobre Nosotros</a>\\r\\n    </div>\\r\\n    {/if}\\r\\n</div>\\r\\n\"],\"names\":[],\"mappings\":\"AAUmB,iBAAiB,8BAAC,CAAC,AACpC,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,IAAI,CACZ,QAAQ,CAAE,QAAQ,CAClB,GAAG,CAAE,GAAG,CACR,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,UAAU,IAAI,CAAC,CAAC,IAAI,CAAC,AAAE,CAAC,AACnC,gCAAiB,CAAC,MAAM,eAAC,CAAC,AACxB,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,GAAG,CACX,QAAQ,CAAE,MAAM,CAChB,aAAa,CAAE,IAAI,CACnB,UAAU,CAAE,CAAC,CAAC,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,GAAG,CAAC,AAAE,CAAC,AAE9C,wBAAS,CAAC,OAAO,eAAC,CAAC,AACjB,UAAU,CAAE,KAAK,CACjB,WAAW,CAAE,IAAI,AAAE,CAAC,AACpB,wBAAS,CAAC,OAAO,WAAW,YAAY,eAAC,CAAC,AACxC,QAAQ,CAAE,QAAQ,CAClB,SAAS,CAAE,KAAK,AAAE,CAAC,AACnB,wBAAS,CAAC,OAAO,WAAW,YAAY,WAAW,eAAC,CAAC,AACnD,GAAG,CAAE,IAAI,CACT,KAAK,CAAE,CAAC,AAAE,CAAC,AACb,wBAAS,CAAC,OAAO,WAAW,YAAY,YAAY,eAAC,CAAC,AACpD,MAAM,CAAE,IAAI,CACZ,IAAI,CAAE,IAAI,AAAE,CAAC,AACf,wBAAS,CAAC,OAAO,WAAW,YAAY,QAAQ,eAAC,CAAC,AAChD,MAAM,CAAE,IAAI,CACZ,KAAK,CAAE,IAAI,AAAE,CAAC\"}"
+	code: ".iframe-container.svelte-1mjn3xi.svelte-1mjn3xi{width:55vh;height:55vh;position:absolute;top:60%;left:47%;transform:translate(-50%, -50%)}.iframe-container.svelte-1mjn3xi iframe.svelte-1mjn3xi{width:100%;height:56%;overflow:hidden;border-radius:10px;box-shadow:0 0 60px rgba(0, 0, 0, 0.3)}.controls.svelte-1mjn3xi .button.svelte-1mjn3xi{font-weight:bold}.controls.svelte-1mjn3xi .button.is-primary.svelte-1mjn3xi{position:absolute;font-size:1.8vh}.controls.svelte-1mjn3xi .button.is-primary.has-iframe.svelte-1mjn3xi{top:-8vh;right:0}.controls.svelte-1mjn3xi .button.is-primary.has-gallery.svelte-1mjn3xi{bottom:30vh;left:15vw}.controls.svelte-1mjn3xi .button.is-primary.has-pdf.svelte-1mjn3xi{bottom:30vh;right:15vw}",
+	map: "{\"version\":3,\"file\":\"StandB.svelte\",\"sources\":[\"StandB.svelte\"],\"sourcesContent\":[\"<script>\\r\\n    import SlideShow from \\\"./SlideShow.svelte\\\"\\r\\n    export let stand\\r\\n    \\r\\n    let images = stand.gallery\\r\\n    const openGallery = () => {\\r\\n        document.querySelector('#galeria-interactiva').classList.toggle('is-active')\\r\\n    }\\r\\n</script>\\r\\n\\r\\n<style lang=\\\"scss\\\">.iframe-container {\\n  width: 55vh;\\n  height: 55vh;\\n  position: absolute;\\n  top: 60%;\\n  left: 47%;\\n  transform: translate(-50%, -50%); }\\n  .iframe-container iframe {\\n    width: 100%;\\n    height: 56%;\\n    overflow: hidden;\\n    border-radius: 10px;\\n    box-shadow: 0 0 60px rgba(0, 0, 0, 0.3); }\\n\\n.controls .button {\\n  font-weight: bold; }\\n  .controls .button.is-primary {\\n    position: absolute;\\n    font-size: 1.8vh; }\\n    .controls .button.is-primary.has-iframe {\\n      top: -8vh;\\n      right: 0; }\\n    .controls .button.is-primary.has-gallery {\\n      bottom: 30vh;\\n      left: 15vw; }\\n    .controls .button.is-primary.has-pdf {\\n      bottom: 30vh;\\n      right: 15vw; }</style>\\r\\n\\r\\n<div class=\\\"controls\\\">\\r\\n    <!-- Video -- Conócenos -->\\r\\n    <div class=\\\"iframe-container\\\">\\r\\n        <a href=\\\"{stand.website}\\\" target=\\\"_blank\\\" class=\\\"button is-rounded is-primary is-uppercase has-iframe\\\">Conócenos</a>\\r\\n        <iframe title=\\\"{stand.title}\\\" src=\\\"{stand.iframe}\\\" frameborder=\\\"0\\\" allow=\\\"autoplay; fullscreen\\\"\\r\\n            allowfullscreen></iframe>\\r\\n    </div>\\r\\n\\r\\n    <!-- Galería -->\\r\\n\\r\\n    <div class=\\\"gallery-trigger\\\">\\r\\n        <button on:click={openGallery} class=\\\"button is-rounded is-primary is-uppercase has-gallery\\\">Galería</button>\\r\\n    </div>\\r\\n    <SlideShow {images}/>\\r\\n\\r\\n    <!-- PDF -- Sobre Nosotros -->\\r\\n    {#if stand.pdf}\\r\\n    <div class=\\\"pdf-trigger\\\">\\r\\n        <a target=\\\"_blank\\\" href={stand.pdf} class=\\\"button is-rounded is-primary is-uppercase has-pdf\\\">Sobre Nosotros</a>\\r\\n    </div>\\r\\n    {/if}\\r\\n</div>\\r\\n\"],\"names\":[],\"mappings\":\"AAUmB,iBAAiB,8BAAC,CAAC,AACpC,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,IAAI,CACZ,QAAQ,CAAE,QAAQ,CAClB,GAAG,CAAE,GAAG,CACR,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,UAAU,IAAI,CAAC,CAAC,IAAI,CAAC,AAAE,CAAC,AACnC,gCAAiB,CAAC,MAAM,eAAC,CAAC,AACxB,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,GAAG,CACX,QAAQ,CAAE,MAAM,CAChB,aAAa,CAAE,IAAI,CACnB,UAAU,CAAE,CAAC,CAAC,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,GAAG,CAAC,AAAE,CAAC,AAE9C,wBAAS,CAAC,OAAO,eAAC,CAAC,AACjB,WAAW,CAAE,IAAI,AAAE,CAAC,AACpB,wBAAS,CAAC,OAAO,WAAW,eAAC,CAAC,AAC5B,QAAQ,CAAE,QAAQ,CAClB,SAAS,CAAE,KAAK,AAAE,CAAC,AACnB,wBAAS,CAAC,OAAO,WAAW,WAAW,eAAC,CAAC,AACvC,GAAG,CAAE,IAAI,CACT,KAAK,CAAE,CAAC,AAAE,CAAC,AACb,wBAAS,CAAC,OAAO,WAAW,YAAY,eAAC,CAAC,AACxC,MAAM,CAAE,IAAI,CACZ,IAAI,CAAE,IAAI,AAAE,CAAC,AACf,wBAAS,CAAC,OAAO,WAAW,QAAQ,eAAC,CAAC,AACpC,MAAM,CAAE,IAAI,CACZ,KAAK,CAAE,IAAI,AAAE,CAAC\"}"
 };
 
 const StandB = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
@@ -711,26 +589,26 @@ const StandB = create_ssr_component(($$result, $$props, $$bindings, $$slots) => 
 	if ($$props.stand === void 0 && $$bindings.stand && stand !== void 0) $$bindings.stand(stand);
 	$$result.css.add(css$4);
 
-	return `<div class="${"controls svelte-1z0yqic"}">
-    <div class="${"iframe-container svelte-1z0yqic"}"><button class="${"button is-rounded is-primary is-outlined is-uppercase has-iframe svelte-1z0yqic"}">Conócenos</button>
-        <iframe${add_attribute("title", stand.title, 0)}${add_attribute("src", stand.iframe, 0)} frameborder="${"0"}" allow="${"autoplay; fullscreen"}" allowfullscreen class="${"svelte-1z0yqic"}"></iframe></div>
+	return `<div class="${"controls svelte-1mjn3xi"}">
+    <div class="${"iframe-container svelte-1mjn3xi"}"><a${add_attribute("href", stand.website, 0)} target="${"_blank"}" class="${"button is-rounded is-primary is-uppercase has-iframe svelte-1mjn3xi"}">Conócenos</a>
+        <iframe${add_attribute("title", stand.title, 0)}${add_attribute("src", stand.iframe, 0)} frameborder="${"0"}" allow="${"autoplay; fullscreen"}" allowfullscreen class="${"svelte-1mjn3xi"}"></iframe></div>
 
     
 
-    <div class="${"gallery-trigger"}"><button class="${"button is-rounded is-primary is-outlined is-uppercase has-gallery svelte-1z0yqic"}">Galería</button></div>
+    <div class="${"gallery-trigger"}"><button class="${"button is-rounded is-primary is-uppercase has-gallery svelte-1mjn3xi"}">Galería</button></div>
     ${validate_component(SlideShow, "SlideShow").$$render($$result, { images }, {}, {})}
 
     
     ${stand.pdf
-	? `<div class="${"pdf-trigger"}"><a target="${"_blank"}"${add_attribute("href", stand.pdf, 0)} class="${"button is-rounded is-primary is-outlined is-uppercase has-pdf svelte-1z0yqic"}">Sobre Nosotros</a></div>`
+	? `<div class="${"pdf-trigger"}"><a target="${"_blank"}"${add_attribute("href", stand.pdf, 0)} class="${"button is-rounded is-primary is-uppercase has-pdf svelte-1mjn3xi"}">Sobre Nosotros</a></div>`
 	: ``}</div>`;
 });
 
 /* src\components\StandA.svelte generated by Svelte v3.23.0 */
 
 const css$5 = {
-	code: ".iframe-container.svelte-zwlj4g.svelte-zwlj4g{width:55vh;height:55vh;position:absolute;top:55%;left:70%;transform:translate(-50%, -50%)}.iframe-container.svelte-zwlj4g iframe.svelte-zwlj4g{width:100%;height:56%;overflow:hidden;border-radius:10px;box-shadow:0 0 60px rgba(0, 0, 0, 0.3)}.controls.svelte-zwlj4g .button.svelte-zwlj4g{background:white;font-weight:bold}.controls.svelte-zwlj4g .button.is-primary.is-outlined.svelte-zwlj4g{position:absolute;font-size:1.8vh}.controls.svelte-zwlj4g .button.is-primary.is-outlined.svelte-zwlj4g:hover,.controls.svelte-zwlj4g .button.is-primary.is-outlined .svelte-zwlj4g:active{background:#500ADA}.controls.svelte-zwlj4g .button.is-primary.is-outlined.has-iframe.svelte-zwlj4g{top:-8vh;right:0}.controls.svelte-zwlj4g .button.is-primary.is-outlined.has-gallery.svelte-zwlj4g{bottom:32vh;left:16.5vw}.controls.svelte-zwlj4g .button.is-primary.is-outlined.has-chat.svelte-zwlj4g{bottom:30vh;right:15vw}.controls.svelte-zwlj4g .button.is-primary.is-outlined.has-pdf.svelte-zwlj4g{top:25vh;right:45vw}",
-	map: "{\"version\":3,\"file\":\"StandA.svelte\",\"sources\":[\"StandA.svelte\"],\"sourcesContent\":[\"<script>\\r\\n    import SlideShow from \\\"./SlideShow.svelte\\\"\\r\\n    export let stand\\r\\n    \\r\\n    let images = stand.gallery\\r\\n    const openGallery = () => {\\r\\n        document.querySelector('#galeria-interactiva').classList.toggle('is-active')\\r\\n    }\\r\\n</script>\\r\\n\\r\\n<style lang=\\\"scss\\\">.iframe-container {\\n  width: 55vh;\\n  height: 55vh;\\n  position: absolute;\\n  top: 55%;\\n  left: 70%;\\n  transform: translate(-50%, -50%); }\\n  .iframe-container iframe {\\n    width: 100%;\\n    height: 56%;\\n    overflow: hidden;\\n    border-radius: 10px;\\n    box-shadow: 0 0 60px rgba(0, 0, 0, 0.3); }\\n\\n.controls .button {\\n  background: white;\\n  font-weight: bold; }\\n  .controls .button.is-primary.is-outlined {\\n    position: absolute;\\n    font-size: 1.8vh; }\\n    .controls .button.is-primary.is-outlined:hover, .controls .button.is-primary.is-outlined :active {\\n      background: #500ADA; }\\n    .controls .button.is-primary.is-outlined.has-iframe {\\n      top: -8vh;\\n      right: 0; }\\n    .controls .button.is-primary.is-outlined.has-gallery {\\n      bottom: 32vh;\\n      left: 16.5vw; }\\n    .controls .button.is-primary.is-outlined.has-chat {\\n      bottom: 30vh;\\n      right: 15vw; }\\n    .controls .button.is-primary.is-outlined.has-pdf {\\n      top: 25vh;\\n      right: 45vw; }</style>\\r\\n\\r\\n<div class=\\\"controls\\\">\\r\\n    <!-- Video -- Conócenos -->\\r\\n    {#if stand.iframe}\\r\\n    <div class=\\\"iframe-container\\\">\\r\\n        <button class=\\\"button is-rounded is-primary is-outlined is-uppercase has-iframe\\\">Conócenos</button>\\r\\n        <iframe title=\\\"{stand.title}\\\" src=\\\"{stand.iframe}\\\" frameborder=\\\"0\\\" allow=\\\"autoplay; fullscreen\\\"\\r\\n            allowfullscreen></iframe> \\r\\n    </div>\\r\\n    {/if}\\r\\n    <!-- Galería -->\\r\\n    {#if stand.gallery}\\r\\n    <div class=\\\"gallery-trigger\\\">\\r\\n        <button on:click={openGallery} class=\\\"button is-primary is-outlined is-uppercase has-gallery\\\"><i data-feather=\\\"image\\\"></i></button>\\r\\n    </div>\\r\\n    <SlideShow {images}/>\\r\\n    {/if}\\r\\n    <!-- PDF -- Sobre Nosotros -->\\r\\n    {#if stand.pdf}\\r\\n    <div class=\\\"pdf-trigger\\\">\\r\\n        <a target=\\\"_blank\\\" href={stand.pdf} class=\\\"button is-rounded is-primary is-outlined is-uppercase has-pdf\\\">Sobre Nosotros</a>\\r\\n    </div>\\r\\n    {/if}\\r\\n    <!-- PDF -- Chat Modal -->\\r\\n    {#if stand.pdf}\\r\\n    <div class=\\\"chat-trigger\\\">\\r\\n        <a target=\\\"_blank\\\" href={stand.pdf} class=\\\"button is-rounded is-primary is-outlined is-uppercase has-chat\\\">Punto de Contácto</a>\\r\\n    </div>\\r\\n    {/if}\\r\\n    \\r\\n</div>\\r\\n\"],\"names\":[],\"mappings\":\"AAUmB,iBAAiB,4BAAC,CAAC,AACpC,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,IAAI,CACZ,QAAQ,CAAE,QAAQ,CAClB,GAAG,CAAE,GAAG,CACR,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,UAAU,IAAI,CAAC,CAAC,IAAI,CAAC,AAAE,CAAC,AACnC,+BAAiB,CAAC,MAAM,cAAC,CAAC,AACxB,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,GAAG,CACX,QAAQ,CAAE,MAAM,CAChB,aAAa,CAAE,IAAI,CACnB,UAAU,CAAE,CAAC,CAAC,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,GAAG,CAAC,AAAE,CAAC,AAE9C,uBAAS,CAAC,OAAO,cAAC,CAAC,AACjB,UAAU,CAAE,KAAK,CACjB,WAAW,CAAE,IAAI,AAAE,CAAC,AACpB,uBAAS,CAAC,OAAO,WAAW,YAAY,cAAC,CAAC,AACxC,QAAQ,CAAE,QAAQ,CAClB,SAAS,CAAE,KAAK,AAAE,CAAC,AACnB,uBAAS,CAAC,OAAO,WAAW,0BAAY,MAAM,CAAE,uBAAS,CAAC,OAAO,WAAW,YAAY,eAAC,OAAO,AAAC,CAAC,AAChG,UAAU,CAAE,OAAO,AAAE,CAAC,AACxB,uBAAS,CAAC,OAAO,WAAW,YAAY,WAAW,cAAC,CAAC,AACnD,GAAG,CAAE,IAAI,CACT,KAAK,CAAE,CAAC,AAAE,CAAC,AACb,uBAAS,CAAC,OAAO,WAAW,YAAY,YAAY,cAAC,CAAC,AACpD,MAAM,CAAE,IAAI,CACZ,IAAI,CAAE,MAAM,AAAE,CAAC,AACjB,uBAAS,CAAC,OAAO,WAAW,YAAY,SAAS,cAAC,CAAC,AACjD,MAAM,CAAE,IAAI,CACZ,KAAK,CAAE,IAAI,AAAE,CAAC,AAChB,uBAAS,CAAC,OAAO,WAAW,YAAY,QAAQ,cAAC,CAAC,AAChD,GAAG,CAAE,IAAI,CACT,KAAK,CAAE,IAAI,AAAE,CAAC\"}"
+	code: ".iframe-container.svelte-d89b3q.svelte-d89b3q{width:55vh;height:55vh;position:absolute;top:55%;left:70%;transform:translate(-50%, -50%)}.iframe-container.svelte-d89b3q iframe.svelte-d89b3q{width:100%;height:56%;overflow:hidden;border-radius:10px;box-shadow:0 0 60px rgba(0, 0, 0, 0.3)}.controls.svelte-d89b3q .button.svelte-d89b3q{font-weight:bold}.controls.svelte-d89b3q .button.is-primary.svelte-d89b3q{position:absolute;font-size:1.8vh}.controls.svelte-d89b3q .button.is-primary.has-iframe.svelte-d89b3q{top:-8vh;right:0}.controls.svelte-d89b3q .button.is-primary.has-gallery.svelte-d89b3q{bottom:32vh;left:16.5vw}.controls.svelte-d89b3q .button.is-primary.has-chat.svelte-d89b3q{bottom:30vh;right:15vw}.controls.svelte-d89b3q .button.is-primary.has-pdf.svelte-d89b3q{top:25vh;right:45vw}",
+	map: "{\"version\":3,\"file\":\"StandA.svelte\",\"sources\":[\"StandA.svelte\"],\"sourcesContent\":[\"<script>\\r\\n    import SlideShow from \\\"./SlideShow.svelte\\\"\\r\\n    export let stand\\r\\n    \\r\\n    let images = stand.gallery\\r\\n    const openGallery = () => {\\r\\n        document.querySelector('#galeria-interactiva').classList.toggle('is-active')\\r\\n    }\\r\\n</script>\\r\\n\\r\\n<style lang=\\\"scss\\\">.iframe-container {\\n  width: 55vh;\\n  height: 55vh;\\n  position: absolute;\\n  top: 55%;\\n  left: 70%;\\n  transform: translate(-50%, -50%); }\\n  .iframe-container iframe {\\n    width: 100%;\\n    height: 56%;\\n    overflow: hidden;\\n    border-radius: 10px;\\n    box-shadow: 0 0 60px rgba(0, 0, 0, 0.3); }\\n\\n.controls .button {\\n  font-weight: bold; }\\n  .controls .button.is-primary {\\n    position: absolute;\\n    font-size: 1.8vh; }\\n    .controls .button.is-primary.has-iframe {\\n      top: -8vh;\\n      right: 0; }\\n    .controls .button.is-primary.has-gallery {\\n      bottom: 32vh;\\n      left: 16.5vw; }\\n    .controls .button.is-primary.has-chat {\\n      bottom: 30vh;\\n      right: 15vw; }\\n    .controls .button.is-primary.has-pdf {\\n      top: 25vh;\\n      right: 45vw; }</style>\\r\\n\\r\\n<div class=\\\"controls\\\">\\r\\n    <!-- Video -- Conócenos -->\\r\\n    {#if stand.iframe}\\r\\n    <div class=\\\"iframe-container\\\">\\r\\n        <a href=\\\"{stand.website}\\\" target=\\\"_blank\\\" class=\\\"button is-rounded is-primary is-uppercase has-iframe\\\">Conócenos</a>\\r\\n        <iframe title=\\\"{stand.title}\\\" src=\\\"{stand.iframe}\\\" frameborder=\\\"0\\\" allow=\\\"autoplay; fullscreen\\\"\\r\\n            allowfullscreen></iframe> \\r\\n    </div>\\r\\n    {/if}\\r\\n    <!-- Galería -->\\r\\n    {#if stand.gallery}\\r\\n    <div class=\\\"gallery-trigger\\\">\\r\\n        <button on:click={openGallery} class=\\\"button is-primary is-uppercase has-gallery\\\"><i data-feather=\\\"image\\\"></i></button>\\r\\n    </div>\\r\\n    <SlideShow {images}/>\\r\\n    {/if}\\r\\n    <!-- PDF -- Sobre Nosotros -->\\r\\n    {#if stand.pdf}\\r\\n    <div class=\\\"pdf-trigger\\\">\\r\\n        <a target=\\\"_blank\\\" href={stand.pdf} class=\\\"button is-rounded is-primary is-uppercase has-pdf\\\">Sobre Nosotros</a>\\r\\n    </div>\\r\\n    {/if}\\r\\n    <!-- PDF -- Chat Modal -->\\r\\n    {#if stand.pdf}\\r\\n    <div class=\\\"chat-trigger\\\">\\r\\n        <a target=\\\"_blank\\\" href={stand.pdf} class=\\\"button is-rounded is-primary is-uppercase has-chat\\\">Punto de Contácto</a>\\r\\n    </div>\\r\\n    {/if}\\r\\n    \\r\\n</div>\\r\\n\"],\"names\":[],\"mappings\":\"AAUmB,iBAAiB,4BAAC,CAAC,AACpC,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,IAAI,CACZ,QAAQ,CAAE,QAAQ,CAClB,GAAG,CAAE,GAAG,CACR,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,UAAU,IAAI,CAAC,CAAC,IAAI,CAAC,AAAE,CAAC,AACnC,+BAAiB,CAAC,MAAM,cAAC,CAAC,AACxB,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,GAAG,CACX,QAAQ,CAAE,MAAM,CAChB,aAAa,CAAE,IAAI,CACnB,UAAU,CAAE,CAAC,CAAC,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,GAAG,CAAC,AAAE,CAAC,AAE9C,uBAAS,CAAC,OAAO,cAAC,CAAC,AACjB,WAAW,CAAE,IAAI,AAAE,CAAC,AACpB,uBAAS,CAAC,OAAO,WAAW,cAAC,CAAC,AAC5B,QAAQ,CAAE,QAAQ,CAClB,SAAS,CAAE,KAAK,AAAE,CAAC,AACnB,uBAAS,CAAC,OAAO,WAAW,WAAW,cAAC,CAAC,AACvC,GAAG,CAAE,IAAI,CACT,KAAK,CAAE,CAAC,AAAE,CAAC,AACb,uBAAS,CAAC,OAAO,WAAW,YAAY,cAAC,CAAC,AACxC,MAAM,CAAE,IAAI,CACZ,IAAI,CAAE,MAAM,AAAE,CAAC,AACjB,uBAAS,CAAC,OAAO,WAAW,SAAS,cAAC,CAAC,AACrC,MAAM,CAAE,IAAI,CACZ,KAAK,CAAE,IAAI,AAAE,CAAC,AAChB,uBAAS,CAAC,OAAO,WAAW,QAAQ,cAAC,CAAC,AACpC,GAAG,CAAE,IAAI,CACT,KAAK,CAAE,IAAI,AAAE,CAAC\"}"
 };
 
 const StandA = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
@@ -740,31 +618,38 @@ const StandA = create_ssr_component(($$result, $$props, $$bindings, $$slots) => 
 	if ($$props.stand === void 0 && $$bindings.stand && stand !== void 0) $$bindings.stand(stand);
 	$$result.css.add(css$5);
 
-	return `<div class="${"controls svelte-zwlj4g"}">
+	return `<div class="${"controls svelte-d89b3q"}">
     ${stand.iframe
-	? `<div class="${"iframe-container svelte-zwlj4g"}"><button class="${"button is-rounded is-primary is-outlined is-uppercase has-iframe svelte-zwlj4g"}">Conócenos</button>
-        <iframe${add_attribute("title", stand.title, 0)}${add_attribute("src", stand.iframe, 0)} frameborder="${"0"}" allow="${"autoplay; fullscreen"}" allowfullscreen class="${"svelte-zwlj4g"}"></iframe></div>`
+	? `<div class="${"iframe-container svelte-d89b3q"}"><a${add_attribute("href", stand.website, 0)} target="${"_blank"}" class="${"button is-rounded is-primary is-uppercase has-iframe svelte-d89b3q"}">Conócenos</a>
+        <iframe${add_attribute("title", stand.title, 0)}${add_attribute("src", stand.iframe, 0)} frameborder="${"0"}" allow="${"autoplay; fullscreen"}" allowfullscreen class="${"svelte-d89b3q"}"></iframe></div>`
 	: ``}
     
     ${stand.gallery
-	? `<div class="${"gallery-trigger svelte-zwlj4g"}"><button class="${"button is-primary is-outlined is-uppercase has-gallery svelte-zwlj4g"}"><i data-feather="${"image"}" class="${"svelte-zwlj4g"}"></i></button></div>
+	? `<div class="${"gallery-trigger"}"><button class="${"button is-primary is-uppercase has-gallery svelte-d89b3q"}"><i data-feather="${"image"}"></i></button></div>
     ${validate_component(SlideShow, "SlideShow").$$render($$result, { images }, {}, {})}`
 	: ``}
     
     ${stand.pdf
-	? `<div class="${"pdf-trigger svelte-zwlj4g"}"><a target="${"_blank"}"${add_attribute("href", stand.pdf, 0)} class="${"button is-rounded is-primary is-outlined is-uppercase has-pdf svelte-zwlj4g"}">Sobre Nosotros</a></div>`
+	? `<div class="${"pdf-trigger"}"><a target="${"_blank"}"${add_attribute("href", stand.pdf, 0)} class="${"button is-rounded is-primary is-uppercase has-pdf svelte-d89b3q"}">Sobre Nosotros</a></div>`
 	: ``}
     
     ${stand.pdf
-	? `<div class="${"chat-trigger svelte-zwlj4g"}"><a target="${"_blank"}"${add_attribute("href", stand.pdf, 0)} class="${"button is-rounded is-primary is-outlined is-uppercase has-chat svelte-zwlj4g"}">Punto de Contácto</a></div>`
+	? `<div class="${"chat-trigger"}"><a target="${"_blank"}"${add_attribute("href", stand.pdf, 0)} class="${"button is-rounded is-primary is-uppercase has-chat svelte-d89b3q"}">Punto de Contácto</a></div>`
 	: ``}</div>`;
+});
+
+/* src\components\Admin.svelte generated by Svelte v3.23.0 */
+
+const Admin = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	const params = new URLSearchParams(window.location.search);
+	return ``;
 });
 
 /* src\routes\medios\[slug].svelte generated by Svelte v3.23.0 */
 
 const css$6 = {
 	code: "#stand.svelte-1hjtafe.svelte-1hjtafe{background-position:bottom !important;background-size:cover !important;background-repeat:no-repeat !important}.button#volver.svelte-1hjtafe.svelte-1hjtafe{background:linear-gradient(71deg, #a100e0 0%, #e73c29 100%)}.button#volver.svelte-1hjtafe .icon.svelte-1hjtafe{background:white;color:black;height:50px;width:50px;margin-left:-25px;margin-right:20px}",
-	map: "{\"version\":3,\"file\":\"[slug].svelte\",\"sources\":[\"[slug].svelte\"],\"sourcesContent\":[\"<script context=\\\"module\\\">\\n\\n\\timport StandA from '../../components/StandA.svelte'\\n\\timport StandB from '../../components/StandB.svelte'\\n\\n\\texport async function preload({\\n\\t\\tparams,\\n\\t\\tquery\\n\\t}) {\\n\\t\\t// the `slug` parameter is available because\\n\\t\\t// this file is called [slug].svelte\\n\\t\\tconst res = await this.fetch(`medios/${params.slug}.json`);\\n\\t\\tconst data = await res.json();\\n\\n\\t\\tif (res.status === 200) {\\n\\t\\t\\treturn {\\n\\t\\t\\t\\tstand: data\\n\\t\\t\\t};\\n\\t\\t} else {\\n\\t\\t\\tthis.error(res.status, data.message);\\n\\t\\t}\\n\\t}\\n</script>\\n\\n<style lang=\\\"scss\\\">#stand {\\n  background-position: bottom !important;\\n  background-size: cover !important;\\n  background-repeat: no-repeat !important; }\\n\\n.button#volver {\\n  background: linear-gradient(71deg, #a100e0 0%, #e73c29 100%); }\\n  .button#volver .icon {\\n    background: white;\\n    color: black;\\n    height: 50px;\\n    width: 50px;\\n    margin-left: -25px;\\n    margin-right: 20px; }</style>\\n\\n<script>\\n\\texport let stand;\\n</script>\\n\\n<svelte:head>\\n\\t<title>{stand.title} - FIMPU</title>\\n</svelte:head>\\n\\n<section id=\\\"stand\\\" class=\\\"hero is-fullheight\\\" style=\\\"background:url({stand.background})\\\">\\n\\t<div class=\\\"hero-body\\\">\\n\\t\\t{#if stand.type === 'a'}\\n\\t\\t\\t<StandA {stand}/>\\n\\t\\t{:else}\\n\\t\\t\\t<StandB {stand}/>\\n\\t\\t{/if}\\n\\t</div>\\n\\t<div class=\\\"hero-footer\\\">\\n\\t\\t<div class=\\\"container\\\">\\n\\t\\t\\t<a href=\\\"/medios\\\" id=\\\"volver\\\" class=\\\"button is-primary has-margin-bottom-50\\\"><span class=\\\"icon is-small\\\"><i\\n\\t\\t\\t\\t\\t\\tdata-feather=\\\"chevrons-left\\\"></i></span><span>Volver a Medios</span></a>\\n\\t\\t</div>\\n\\t</div>\\n</section>\"],\"names\":[],\"mappings\":\"AAwBmB,MAAM,8BAAC,CAAC,AACzB,mBAAmB,CAAE,MAAM,CAAC,UAAU,CACtC,eAAe,CAAE,KAAK,CAAC,UAAU,CACjC,iBAAiB,CAAE,SAAS,CAAC,UAAU,AAAE,CAAC,AAE5C,OAAO,OAAO,8BAAC,CAAC,AACd,UAAU,CAAE,gBAAgB,KAAK,CAAC,CAAC,OAAO,CAAC,EAAE,CAAC,CAAC,OAAO,CAAC,IAAI,CAAC,AAAE,CAAC,AAC/D,OAAO,sBAAO,CAAC,KAAK,eAAC,CAAC,AACpB,UAAU,CAAE,KAAK,CACjB,KAAK,CAAE,KAAK,CACZ,MAAM,CAAE,IAAI,CACZ,KAAK,CAAE,IAAI,CACX,WAAW,CAAE,KAAK,CAClB,YAAY,CAAE,IAAI,AAAE,CAAC\"}"
+	map: "{\"version\":3,\"file\":\"[slug].svelte\",\"sources\":[\"[slug].svelte\"],\"sourcesContent\":[\"<script context=\\\"module\\\">\\n\\n\\timport Admin from \\\"../../components/Admin.svelte\\\"\\n\\timport StandA from '../../components/StandA.svelte'\\n\\timport StandB from '../../components/StandB.svelte'\\n\\n\\texport async function preload({\\n\\t\\tparams,\\n\\t\\tquery\\n\\t}) {\\n\\t\\t// the `slug` parameter is available because\\n\\t\\t// this file is called [slug].svelte\\n\\t\\tconst res = await this.fetch(`medios/${params.slug}.json`);\\n\\t\\tconst data = await res.json();\\n\\n\\t\\tif (res.status === 200) {\\n\\t\\t\\treturn {\\n\\t\\t\\t\\tstand: data\\n\\t\\t\\t};\\n\\t\\t} else {\\n\\t\\t\\tthis.error(res.status, data.message);\\n\\t\\t}\\n\\t}\\n</script>\\n\\n<style lang=\\\"scss\\\">#stand {\\n  background-position: bottom !important;\\n  background-size: cover !important;\\n  background-repeat: no-repeat !important; }\\n\\n.button#volver {\\n  background: linear-gradient(71deg, #a100e0 0%, #e73c29 100%); }\\n  .button#volver .icon {\\n    background: white;\\n    color: black;\\n    height: 50px;\\n    width: 50px;\\n    margin-left: -25px;\\n    margin-right: 20px; }</style>\\n\\n<script>\\n\\texport let stand;\\n</script>\\n\\n<svelte:head>\\n\\t<title>{stand.title} - FIMPU</title>\\n</svelte:head>\\n\\n<Admin/>\\n<section id=\\\"stand\\\" class=\\\"hero is-fullheight\\\" style=\\\"background:url({stand.background})\\\">\\n\\t<div class=\\\"hero-body\\\">\\n\\t\\t{#if stand.type === 'a'}\\n\\t\\t\\t<StandA {stand}/>\\n\\t\\t{:else}\\n\\t\\t\\t<StandB {stand}/>\\n\\t\\t{/if}\\n\\t</div>\\n\\t<div class=\\\"hero-footer\\\">\\n\\t\\t<div class=\\\"container\\\">\\n\\t\\t\\t<a href=\\\"/medios\\\" id=\\\"volver\\\" class=\\\"button is-primary has-margin-bottom-50\\\"><span class=\\\"icon is-small\\\"><i\\n\\t\\t\\t\\t\\t\\tdata-feather=\\\"chevrons-left\\\"></i></span><span>Volver a Medios</span></a>\\n\\t\\t</div>\\n\\t</div>\\n</section>\"],\"names\":[],\"mappings\":\"AAyBmB,MAAM,8BAAC,CAAC,AACzB,mBAAmB,CAAE,MAAM,CAAC,UAAU,CACtC,eAAe,CAAE,KAAK,CAAC,UAAU,CACjC,iBAAiB,CAAE,SAAS,CAAC,UAAU,AAAE,CAAC,AAE5C,OAAO,OAAO,8BAAC,CAAC,AACd,UAAU,CAAE,gBAAgB,KAAK,CAAC,CAAC,OAAO,CAAC,EAAE,CAAC,CAAC,OAAO,CAAC,IAAI,CAAC,AAAE,CAAC,AAC/D,OAAO,sBAAO,CAAC,KAAK,eAAC,CAAC,AACpB,UAAU,CAAE,KAAK,CACjB,KAAK,CAAE,KAAK,CACZ,MAAM,CAAE,IAAI,CACZ,KAAK,CAAE,IAAI,CACX,WAAW,CAAE,KAAK,CAClB,YAAY,CAAE,IAAI,AAAE,CAAC\"}"
 };
 
 async function preload({ params, query }) {
@@ -788,6 +673,7 @@ const U5Bslugu5D = create_ssr_component(($$result, $$props, $$bindings, $$slots)
 
 	return `${($$result.head += `${($$result.title = `<title>${escape(stand.title)} - FIMPU</title>`, "")}`, "")}
 
+${validate_component(Admin, "Admin").$$render($$result, {}, {}, {})}
 <section id="${"stand"}" class="${"hero is-fullheight svelte-1hjtafe"}" style="${"background:url(" + escape(stand.background) + ")"}"><div class="${"hero-body"}">${stand.type === "a"
 	? `${validate_component(StandA, "StandA").$$render($$result, { stand }, {}, {})}`
 	: `${validate_component(StandB, "StandB").$$render($$result, { stand }, {}, {})}`}</div>
@@ -804,16 +690,273 @@ const About = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
 <p>This is the &#39;about&#39; page. There&#39;s not much here.</p></section>`;
 });
 
-/* src\components\Agenda.svelte generated by Svelte v3.23.0 */
+/* src\routes\admin\index.svelte generated by Svelte v3.23.0 */
+
+const Admin$1 = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	return ``;
+});
+
+/* src\routes\admin\agenda\index.svelte generated by Svelte v3.23.0 */
+
+const Agenda = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	return ``;
+});
+
+/* src\routes\admin\medios\index.svelte generated by Svelte v3.23.0 */
+
+const Medios$1 = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	return ``;
+});
+
+/* src\routes\admin\medios\[slug].svelte generated by Svelte v3.23.0 */
+
+const U5Bslugu5D$1 = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	return ``;
+});
+
+/* src\routes\admin\salas\index.svelte generated by Svelte v3.23.0 */
+
+const Salas = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	return ``;
+});
+
+/* src\components\RoomChange.svelte generated by Svelte v3.23.0 */
+
+const RoomChange = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	const socket = io("http://localhost:3000");
+	let { room } = $$props, { admin } = $$props;
+
+	const toggleClientModal = () => {
+		document.querySelector("#get-changes").classList.toggle("is-active");
+	};
+
+	/**
+ * Manejando Opciones - Admin
+*/
+	let changes = [], text = "", url = "";
+
+	/**
+ * Manejando Opciones - Cliente
+*/
+	let clientChanges = [];
+
+	socket.on("room-change", res => {
+		console.log(res);
+		console.log("Room:" + room);
+
+		if (res.room === room) {
+			clientChanges = res.changes;
+			clientChanges = clientChanges; //Updating Svelte #each blocks
+			console.log(clientChanges);
+			toggleClientModal();
+		}
+	});
+
+	if ($$props.room === void 0 && $$bindings.room && room !== void 0) $$bindings.room(room);
+	if ($$props.admin === void 0 && $$bindings.admin && admin !== void 0) $$bindings.admin(admin);
+
+	return `
+${admin
+	? `<button class="${"button is-primary"}">Emitir Opciones de Sala</button>
+
+<div id="${"set-changes"}" class="${"modal"}"><div class="${"modal-background"}"></div>
+    <div class="${"modal-content"}"><div class="${"card"}"><div class="${"card-content"}"><h4 class="${"title is-4"}">¿A qué salas pueden dirigirse los usuarios?</h4>
+                ${each(changes, item => `<section class="${"notification is-primary"}"><a${add_attribute("href", item.url, 0)}>${escape(item.text)}</a>
+                    </section>`)}</div>
+            <div class="${"card-footer"}"><div class="${"card-footer-item"}"><form class="${"form"}"><div class="${"field has-addons"}"><div class="${"control is-expanded"}"><input type="${"text"}" placeholder="${"Texto"}" class="${"input"}"${add_attribute("value", text, 1)}></div>
+                            <div class="${"control"}"><input type="${"text"}" placeholder="${"URL"}" class="${"input"}"${add_attribute("value", url, 1)}></div>
+                            <div class="${"control"}"><button class="${"button is-primary"}">Agregar Opción</button></div></div></form></div></div>
+            <div class="${"card-footer"}"><div class="${"card-footer-item"}"><button class="${"button is-danger is-outlined"}">Cancelar</button></div>
+                <div class="${"card-footer-item"}"><button class="${"button is-primary"}">Emitir Opciones</button></div></div></div></div>
+    <button class="${"modal-close is-large"}" aria-label="${"close"}"></button></div>`
+	: ``}
+
+
+
+
+<div id="${"get-changes"}" class="${"modal"}"><div class="${"modal-background"}"></div>
+    <div class="${"modal-content"}"><div class="${"box has-background-link has-text-centered"}"><h2 class="${"title is-2 has-text-white"}">¿Qué quieres hacer ahora?</h2>
+            ${each(clientChanges, item => `<section class="${"section"}"><a class="${"button is-primary is-inverted is-rounded"}"${add_attribute("href", item.url, 0)}>${escape(item.text)}</a>
+                </section>`)}</div></div>
+    <button class="${"modal-close is-large"}" aria-label="${"close"}"></button></div>`;
+});
+
+/* src\components\Trivias.svelte generated by Svelte v3.23.0 */
+
+const Trivias = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	return ``;
+});
+
+/* src\components\Chart.svelte generated by Svelte v3.23.0 */
+
+const Chart_1 = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	let { options } = $$props;
+	let canvas, thechart;
+
+	let initChart = () => {
+		if (thechart) thechart.destroy();
+		canvas = document.querySelector(".canvas");
+
+		thechart = new Chart(canvas,
+		{
+				type: "bar",
+				data: options,
+				options: {
+					scales: {
+						yAxes: [{ ticks: { beginAtZero: true } }]
+					}
+				}
+			});
+	};
+
+	onMount(() => {
+		initChart();
+	});
+
+	afterUpdate(() => {
+		initChart();
+	});
+
+	if ($$props.options === void 0 && $$bindings.options && options !== void 0) $$bindings.options(options);
+	return `<div class="${"card-header"}"><canvas class="${"canvas"}"></canvas></div>`;
+});
+
+/* src\components\Encuestas.svelte generated by Svelte v3.23.0 */
 
 const css$7 = {
+	code: "#get-options.svelte-482gym{transition:ease-out 0.4s;transform:translateY(-50%)\r\n    }",
+	map: "{\"version\":3,\"file\":\"Encuestas.svelte\",\"sources\":[\"Encuestas.svelte\"],\"sourcesContent\":[\"<script>\\r\\n    /**\\r\\n     * Este componente está pensado para obtener opciones y enviarlas\\r\\n     * en forma de encuesta, para despues obtener los resultados y renderizarlos en una gráfica\\r\\n     * \\r\\n     * 1: Un trigger para el administrador que abre una modal con el formulario de opciones\\r\\n     * 2: Un evento de Socket que se emite al server, con el objeto de opciones y el slug de la sala. \\r\\n     * 3: Un evento de Socket que se emite desde el server a su sala homóloga\\r\\n     * 4: Un segundo modal que se muestra en la sala homóloga para redirigir según las opciones. se\\r\\n     */\\r\\n    import Chart from \\\"./Chart.svelte\\\"\\r\\n    const socket = io('http://localhost:3000')\\r\\n\\r\\n    export let room, admin\\r\\n\\r\\n    const toggleAdminModal = () => {\\r\\n        document.querySelector('#set-options').classList.toggle('is-active')\\r\\n    }\\r\\n\\r\\n    const toggleClientModal = () => {\\r\\n        document.querySelector('#get-options').classList.toggle('is-hidden')\\r\\n    }\\r\\n\\r\\n\\r\\n    /**\\r\\n     * Estado inicial\\r\\n     */\\r\\n    let labels = [],\\r\\n        data = [],\\r\\n        text = '',\\r\\n        title = '',\\r\\n        options = {\\r\\n            labels: labels,\\r\\n            datasets: [{\\r\\n                label: 'Cantidad de Votos',\\r\\n                data: data,\\r\\n            }]\\r\\n        }\\r\\n\\r\\n    /**\\r\\n     * Manejando Encuestas : Admin\\r\\n     */\\r\\n    const addOptions = (e) => {\\r\\n        e.preventDefault()\\r\\n        if (text != '') {\\r\\n            labels.push(text)\\r\\n            data.push(0)\\r\\n            options = options //Used to update svelte #each blocks\\r\\n            text = ''\\r\\n        }\\r\\n    }\\r\\n\\r\\n    const emitOptions = () => {\\r\\n        socket.emit('poll', {\\r\\n            title: title,\\r\\n            labels: labels,\\r\\n            data: data,\\r\\n            room: room\\r\\n        })\\r\\n    }\\r\\n\\r\\n    const stopOptions = () => {\\r\\n        socket.emit('stop-poll', room)\\r\\n        if(admin){\\r\\n            toggleAdminModal()\\r\\n        }  \\r\\n    }\\r\\n\\r\\n    socket.on('stop-poll', (pollroom) => {\\r\\n        if(pollroom === room) {\\r\\n            labels = [],\\r\\n            data = [],\\r\\n            text = '',\\r\\n            title = '',\\r\\n            options = {\\r\\n                labels: labels,\\r\\n                datasets: [{\\r\\n                    label: 'Cantidad de Votos',\\r\\n                    data: data,\\r\\n                }]\\r\\n            }\\r\\n            toggleClientModal()\\r\\n        }\\r\\n    })\\r\\n\\r\\n    /**\\r\\n     * Manejando encuestas : Client\\r\\n     */\\r\\n\\r\\n    socket.on('poll-running', (poll) => {\\r\\n        if (poll.room === room) {\\r\\n            console.log(poll)\\r\\n            labels = poll.labels\\r\\n            data = poll.data\\r\\n            title = poll.title\\r\\n            options = {\\r\\n                labels: labels,\\r\\n                datasets: [{\\r\\n                    label: 'Cantidad de Votos',\\r\\n                    data: data,\\r\\n                }]\\r\\n            }\\r\\n            console.log(options)\\r\\n            toggleClientModal()\\r\\n        }\\r\\n    })\\r\\n\\r\\n    const Vote = (index) => {\\r\\n        socket.emit('poll-vote', ({\\r\\n            index: index,\\r\\n            title: title\\r\\n        }))\\r\\n        document.querySelector('.client-options-container').classList.toggle('is-hidden')\\r\\n        document.querySelector('.client-chart-container').classList.toggle('is-hidden')\\r\\n    }\\r\\n\\r\\n    socket.on('poll-update-chart', (poll) => {\\r\\n        console.log(poll)\\r\\n        labels = poll.labels\\r\\n        data = poll.data\\r\\n        title = poll.title\\r\\n        options = {\\r\\n            labels: labels,\\r\\n            datasets: [{\\r\\n                label: 'Cantidad de Votos',\\r\\n                data: data,\\r\\n            }]\\r\\n        }\\r\\n    })\\r\\n</script>\\r\\n\\r\\n<!-- Modal de Opciones en el Admin -->\\r\\n{#if (admin)}\\r\\n<button on:click={toggleAdminModal} class=\\\"button is-primary\\\">Emitir Encuesta en la Sala</button>\\r\\n\\r\\n<div id=\\\"set-options\\\" class=\\\"modal\\\">\\r\\n    <div class=\\\"modal-background\\\"></div>\\r\\n    <div class=\\\"modal-content\\\">\\r\\n        <div class=\\\"card\\\">\\r\\n            <Chart {options} />\\r\\n            <div class=\\\"card-content\\\">\\r\\n                <h4 class=\\\"title is-6\\\">Título de la Encuesta</h4>\\r\\n                <div class=\\\"field\\\">\\r\\n                    <input type=\\\"text\\\" placeholder=\\\"Insertar título de la encuesta\\\" bind:value={title} class=\\\"input\\\">\\r\\n                </div>\\r\\n                {#each options.labels as item}\\r\\n                    <section class=\\\"button is-light\\\">\\r\\n                        {item}\\r\\n                    </section>\\r\\n                {/each}\\r\\n            </div>\\r\\n            <div class=\\\"card-footer\\\">\\r\\n                <div class=\\\"card-footer-item\\\">\\r\\n                    <form on:submit={addOptions} class=\\\"form\\\">\\r\\n                        <div class=\\\"field has-addons\\\">\\r\\n                            <div class=\\\"control is-expanded\\\">\\r\\n                                <input type=\\\"text\\\" placeholder=\\\"Texto\\\" bind:value={text} class=\\\"input\\\">\\r\\n                            </div>\\r\\n                            <div class=\\\"control\\\">\\r\\n                                <button  class=\\\"button is-primary\\\">Agregar Opción</button>\\r\\n                            </div>\\r\\n                        </div>\\r\\n                    </form>\\r\\n                </div>\\r\\n            </div>\\r\\n            <div class=\\\"card-footer\\\">\\r\\n                <div class=\\\"card-footer-item\\\">\\r\\n                    <button on:click={toggleAdminModal} class=\\\"button is-danger is-outlined\\\">Cancelar</button>\\r\\n                </div>\\r\\n                <div class=\\\"card-footer-item\\\">\\r\\n                    <button on:click={stopOptions} class=\\\"button is-primary\\\">Detener Encuesta</button>\\r\\n                </div>\\r\\n                <div class=\\\"card-footer-item\\\">\\r\\n                    <button on:click={emitOptions} class=\\\"button is-primary\\\">Emitir Encuesta</button>\\r\\n                </div>\\r\\n            </div>\\r\\n        </div>\\r\\n    </div>\\r\\n    <button on:click={toggleAdminModal} class=\\\"modal-close is-large\\\" aria-label=\\\"close\\\"></button>\\r\\n</div>\\r\\n\\r\\n{:else}\\r\\n\\r\\n<!-- Modal de opciones en la sala Homóloga -->\\r\\n\\r\\n\\r\\n<div id=\\\"get-options\\\" class=\\\"column is-5 is-offset-6 is-hidden\\\">\\r\\n    <div class=\\\"box content is-small has-background-primary has-text-centered\\\">\\r\\n        <h2 class=\\\"title is-4 has-text-white\\\">{title}</h2>\\r\\n        <div class=\\\"client-chart-container is-hidden\\\">\\r\\n            <Chart {options}/>\\r\\n        </div>\\r\\n        <div class=\\\"client-options-container\\\">\\r\\n            <div class=\\\"columns is-multiline\\\">\\r\\n                {#each options.labels as item, index}\\r\\n                <div class=\\\"column is-half\\\">\\r\\n                    <button on:click={() => {Vote(index)}} class=\\\"button is-white is-outlined is-fullwidth\\\">{item}</button>\\r\\n                </div>\\r\\n                {/each}\\r\\n            </div>\\r\\n        </div>\\r\\n    </div>\\r\\n</div>\\r\\n{/if}\\r\\n\\r\\n<style>\\r\\n    #get-options {\\r\\n        transition: ease-out 0.4s;\\r\\n        transform: translateY(-50%)\\r\\n    }</style>\"],\"names\":[],\"mappings\":\"AA8MI,YAAY,cAAC,CAAC,AACV,UAAU,CAAE,QAAQ,CAAC,IAAI,CACzB,SAAS,CAAE,WAAW,IAAI,CAAC;IAC/B,CAAC\"}"
+};
+
+const Encuestas = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	const socket = io("http://localhost:3000");
+	let { room } = $$props, { admin } = $$props;
+
+	const toggleClientModal = () => {
+		document.querySelector("#get-options").classList.toggle("is-hidden");
+	};
+
+	/**
+ * Estado inicial
+ */
+	let labels = [],
+		data = [],
+		text = "",
+		title = "",
+		options = {
+			labels,
+			datasets: [{ label: "Cantidad de Votos", data }]
+		};
+
+	socket.on("stop-poll", pollroom => {
+		if (pollroom === room) {
+			(labels = [], data = [], text = "", title = "", options = {
+				labels,
+				datasets: [{ label: "Cantidad de Votos", data }]
+			});
+
+			toggleClientModal();
+		}
+	});
+
+	/**
+ * Manejando encuestas : Client
+ */
+	socket.on("poll-running", poll => {
+		if (poll.room === room) {
+			console.log(poll);
+			labels = poll.labels;
+			data = poll.data;
+			title = poll.title;
+
+			options = {
+				labels,
+				datasets: [{ label: "Cantidad de Votos", data }]
+			};
+
+			console.log(options);
+			toggleClientModal();
+		}
+	});
+
+	socket.on("poll-update-chart", poll => {
+		console.log(poll);
+		labels = poll.labels;
+		data = poll.data;
+		title = poll.title;
+
+		options = {
+			labels,
+			datasets: [{ label: "Cantidad de Votos", data }]
+		};
+	});
+
+	if ($$props.room === void 0 && $$bindings.room && room !== void 0) $$bindings.room(room);
+	if ($$props.admin === void 0 && $$bindings.admin && admin !== void 0) $$bindings.admin(admin);
+	$$result.css.add(css$7);
+
+	return `
+${admin
+	? `<button class="${"button is-primary"}">Emitir Encuesta en la Sala</button>
+
+<div id="${"set-options"}" class="${"modal"}"><div class="${"modal-background"}"></div>
+    <div class="${"modal-content"}"><div class="${"card"}">${validate_component(Chart_1, "Chart").$$render($$result, { options }, {}, {})}
+            <div class="${"card-content"}"><h4 class="${"title is-6"}">Título de la Encuesta</h4>
+                <div class="${"field"}"><input type="${"text"}" placeholder="${"Insertar título de la encuesta"}" class="${"input"}"${add_attribute("value", title, 1)}></div>
+                ${each(options.labels, item => `<section class="${"button is-light"}">${escape(item)}
+                    </section>`)}</div>
+            <div class="${"card-footer"}"><div class="${"card-footer-item"}"><form class="${"form"}"><div class="${"field has-addons"}"><div class="${"control is-expanded"}"><input type="${"text"}" placeholder="${"Texto"}" class="${"input"}"${add_attribute("value", text, 1)}></div>
+                            <div class="${"control"}"><button class="${"button is-primary"}">Agregar Opción</button></div></div></form></div></div>
+            <div class="${"card-footer"}"><div class="${"card-footer-item"}"><button class="${"button is-danger is-outlined"}">Cancelar</button></div>
+                <div class="${"card-footer-item"}"><button class="${"button is-primary"}">Detener Encuesta</button></div>
+                <div class="${"card-footer-item"}"><button class="${"button is-primary"}">Emitir Encuesta</button></div></div></div></div>
+    <button class="${"modal-close is-large"}" aria-label="${"close"}"></button></div>`
+	: `
+
+
+<div id="${"get-options"}" class="${"column is-5 is-offset-6 is-hidden svelte-482gym"}"><div class="${"box content is-small has-background-primary has-text-centered"}"><h2 class="${"title is-4 has-text-white"}">${escape(title)}</h2>
+        <div class="${"client-chart-container is-hidden"}">${validate_component(Chart_1, "Chart").$$render($$result, { options }, {}, {})}</div>
+        <div class="${"client-options-container"}"><div class="${"columns is-multiline"}">${each(options.labels, (item, index) => `<div class="${"column is-half"}"><button class="${"button is-white is-outlined is-fullwidth"}">${escape(item)}</button>
+                </div>`)}</div></div></div></div>`}`;
+});
+
+/* src\components\Iframe.svelte generated by Svelte v3.23.0 */
+
+const css$8 = {
+	code: "iframe.svelte-1h20lil{width:100%;height:50vh}",
+	map: "{\"version\":3,\"file\":\"Iframe.svelte\",\"sources\":[\"Iframe.svelte\"],\"sourcesContent\":[\"<script>\\r\\n    export let sala\\r\\n    import Player from '@vimeo/player'\\r\\n\\r\\n    const socket = io('http://localhost:3000')\\r\\n\\r\\n    let iframe = sala.iframe\\r\\n\\r\\n    socket.on('streamline', (res) => {\\r\\n        if(res.room == sala.slug){\\r\\n            console.log(res.message)\\r\\n            iframe = res.message //Actualizamos la vista de Mensajes\\r\\n            const iframe = document.querySelector('#streamline')\\r\\n            const streamline = new Player(iframe)\\r\\n            streamline.play()\\r\\n        }\\r\\n    })\\r\\n</script>\\r\\n\\r\\n<style>\\r\\n    iframe {\\r\\n        width: 100%;\\r\\n        height: 50vh;\\r\\n    }</style>\\r\\n\\r\\n<iframe id=\\\"streamline\\\" title=\\\"\\\" src=\\\"{iframe}\\\" frameborder=\\\"0\\\"\\r\\nallow=\\\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\\\"\\r\\nallowfullscreen></iframe>\"],\"names\":[],\"mappings\":\"AAoBI,MAAM,eAAC,CAAC,AACJ,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,IAAI,AAChB,CAAC\"}"
+};
+
+const Iframe = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	let { sala } = $$props;
+	const socket = io("http://localhost:3000");
+	let iframe = sala.iframe;
+
+	socket.on("streamline", res => {
+		if (res.room == sala.slug) {
+			console.log(res.message);
+			iframe = res.message; //Actualizamos la vista de Mensajes
+			const iframe = document.querySelector("#streamline");
+			const streamline = new Player(iframe);
+			streamline.play();
+		}
+	});
+
+	if ($$props.sala === void 0 && $$bindings.sala && sala !== void 0) $$bindings.sala(sala);
+	$$result.css.add(css$8);
+	return `<iframe id="${"streamline"}" title="${""}"${add_attribute("src", iframe, 0)} frameborder="${"0"}" allow="${"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"}" allowfullscreen class="${"svelte-1h20lil"}"></iframe>`;
+});
+
+/* src\components\Agenda.svelte generated by Svelte v3.23.0 */
+
+const css$9 = {
 	code: ".modal-content.svelte-1iwbni2{width:90vw;height:90vh;display:flex;align-items:center}",
 	map: "{\"version\":3,\"file\":\"Agenda.svelte\",\"sources\":[\"Agenda.svelte\"],\"sourcesContent\":[\"<div id=\\\"agenda-interactiva\\\" class=\\\"modal\\\">\\r\\n    <div on:click={closeModal} class=\\\"modal-background\\\"></div>\\r\\n    <div class=\\\"modal-content\\\">\\r\\n        <div class=\\\"container\\\">\\r\\n            <div class=\\\"columns\\\">\\r\\n                <div class=\\\"column is-one-third\\\">\\r\\n                    <div class=\\\"box\\\">\\r\\n                        <article class=\\\"media\\\">\\r\\n                            <div class=\\\"media-left has-text-primary\\\">\\r\\n                                <figure class=\\\"image is-64x64\\\">\\r\\n                                    <i data-feather=\\\"calendar\\\"></i>\\r\\n                                </figure>\\r\\n                            </div>\\r\\n                            <div class=\\\"media-content\\\">\\r\\n                                <div class=\\\"content has-margin-bottom-20\\\">\\r\\n                                    <strong class=\\\"has-text-primary has-margin-bottom-10\\\">Actos Protocolarios - Instalación</strong>\\r\\n                                    <br>\\r\\n                                    <div class=\\\"button is-small is-primary is-outlined\\\">\\r\\n                                        <span class=\\\"icon is-small\\\"><i data-feather=\\\"clock\\\"></i></span> \\r\\n                                        <small>9:00am</small>\\r\\n                                    </div>\\r\\n                                    <div class=\\\"button is-small is-link is-outlined\\\">\\r\\n                                        <span class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span> \\r\\n                                        <small>Auditorio Principal</small>\\r\\n                                    </div>\\r\\n                                </div>\\r\\n                                <div class=\\\"content is-small\\\">\\r\\n                                    \\t<strong>Apertura del foro:</strong>\\r\\n                                        <ul>\\r\\n                                            <li>Iván Duque Márquez</li>\\r\\n                                            <li>Presidente de la República de Colombia</li>\\r\\n                                            <li>CO</li>\\r\\n                                        </ul>\\r\\n                                        <strong>Apertura del foro:</strong>\\r\\n                                        <ul>\\r\\n                                            <li>Karen Abudinen</li>\\r\\n                                            <li>Ministra TIC</li>\\r\\n                                        </ul>\\r\\n                                </div>\\r\\n                            </div>\\r\\n                        </article>\\r\\n                    </div>\\r\\n                </div>\\r\\n                <div class=\\\"column is-one-third\\\">\\r\\n                    <div class=\\\"box\\\">\\r\\n                        <article class=\\\"media\\\">\\r\\n                            <div class=\\\"media-left has-text-primary\\\">\\r\\n                                <figure class=\\\"image is-64x64\\\">\\r\\n                                    <i data-feather=\\\"calendar\\\"></i>\\r\\n                                </figure>\\r\\n                            </div>\\r\\n                            <div class=\\\"media-content\\\">\\r\\n                                <div class=\\\"content has-margin-bottom-20\\\">\\r\\n                                    <strong class=\\\"has-text-primary has-margin-bottom-10\\\">Actos Protocolarios - Instalación</strong>\\r\\n                                    <br>\\r\\n                                    <div class=\\\"button is-small is-primary is-outlined\\\">\\r\\n                                        <span class=\\\"icon is-small\\\"><i data-feather=\\\"clock\\\"></i></span> \\r\\n                                        <small>9:00am</small>\\r\\n                                    </div>\\r\\n                                    <div class=\\\"button is-small is-link is-outlined\\\">\\r\\n                                        <span class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span> \\r\\n                                        <small>Auditorio Principal</small>\\r\\n                                    </div>\\r\\n                                </div>\\r\\n                                <div class=\\\"content is-small\\\">\\r\\n                                    \\t<strong>Apertura del foro:</strong>\\r\\n                                        <ul>\\r\\n                                            <li>Iván Duque Márquez</li>\\r\\n                                            <li>Presidente de la República de Colombia</li>\\r\\n                                            <li>CO</li>\\r\\n                                        </ul>\\r\\n                                        <strong>Apertura del foro:</strong>\\r\\n                                        <ul>\\r\\n                                            <li>Karen Abudinen</li>\\r\\n                                            <li>Ministra TIC</li>\\r\\n                                        </ul>\\r\\n                                </div>\\r\\n                            </div>\\r\\n                        </article>\\r\\n                    </div>\\r\\n                </div>\\r\\n                <div class=\\\"column is-one-third\\\">\\r\\n                    <div class=\\\"box\\\">\\r\\n                        <article class=\\\"media\\\">\\r\\n                            <div class=\\\"media-left has-text-primary\\\">\\r\\n                                <figure class=\\\"image is-64x64\\\">\\r\\n                                    <i data-feather=\\\"calendar\\\"></i>\\r\\n                                </figure>\\r\\n                            </div>\\r\\n                            <div class=\\\"media-content\\\">\\r\\n                                <div class=\\\"content has-margin-bottom-20\\\">\\r\\n                                    <strong class=\\\"has-text-primary has-margin-bottom-10\\\">Actos Protocolarios - Instalación</strong>\\r\\n                                    <br>\\r\\n                                    <div class=\\\"button is-small is-primary is-outlined\\\">\\r\\n                                        <span class=\\\"icon is-small\\\"><i data-feather=\\\"clock\\\"></i></span> \\r\\n                                        <small>9:00am</small>\\r\\n                                    </div>\\r\\n                                    <div class=\\\"button is-small is-link is-outlined\\\">\\r\\n                                        <span class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span> \\r\\n                                        <small>Auditorio Principal</small>\\r\\n                                    </div>\\r\\n                                </div>\\r\\n                                <div class=\\\"content is-small\\\">\\r\\n                                    \\t<strong>Apertura del foro:</strong>\\r\\n                                        <ul>\\r\\n                                            <li>Iván Duque Márquez</li>\\r\\n                                            <li>Presidente de la República de Colombia</li>\\r\\n                                            <li>CO</li>\\r\\n                                        </ul>\\r\\n                                        <strong>Apertura del foro:</strong>\\r\\n                                        <ul>\\r\\n                                            <li>Karen Abudinen</li>\\r\\n                                            <li>Ministra TIC</li>\\r\\n                                        </ul>\\r\\n                                </div>\\r\\n                            </div>\\r\\n                        </article>\\r\\n                    </div>\\r\\n                </div>\\r\\n            </div>\\r\\n        </div>\\r\\n    </div>\\r\\n    <button on:click={closeModal} class=\\\"modal-close is-large\\\" aria-label=\\\"close\\\"></button>\\r\\n</div>\\r\\n\\r\\n<script>\\r\\n    const closeModal = () => {\\r\\n        document.querySelector('#agenda-interactiva').classList.toggle('is-active')\\r\\n    }\\r\\n</script>\\r\\n\\r\\n<style>\\r\\n    .modal-content {\\r\\n        width: 90vw;\\r\\n        height: 90vh;\\r\\n        display: flex;\\r\\n        align-items: center;\\r\\n    }</style>\"],\"names\":[],\"mappings\":\"AAoII,cAAc,eAAC,CAAC,AACZ,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,IAAI,CACZ,OAAO,CAAE,IAAI,CACb,WAAW,CAAE,MAAM,AACvB,CAAC\"}"
 };
 
-const Agenda = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+const Agenda$1 = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
 
-	$$result.css.add(css$7);
+	$$result.css.add(css$9);
 
 	return `<div id="${"agenda-interactiva"}" class="${"modal"}"><div class="${"modal-background"}"></div>
     <div class="${"modal-content svelte-1iwbni2"}"><div class="${"container"}"><div class="${"columns"}"><div class="${"column is-one-third"}"><div class="${"box"}"><article class="${"media"}"><div class="${"media-left has-text-primary"}"><figure class="${"image is-64x64"}"><i data-feather="${"calendar"}"></i></figure></div>
@@ -862,50 +1005,196 @@ const Agenda = create_ssr_component(($$result, $$props, $$bindings, $$slots) => 
 </div>`;
 });
 
+/* src\components\Messages.svelte generated by Svelte v3.23.0 */
+
+const css$a = {
+	code: ".card-content.svelte-1d5lgmj{height:30vh;overflow:scroll}.card-content.svelte-1d5lgmj::-webkit-scrollbar{display:none}",
+	map: "{\"version\":3,\"file\":\"Messages.svelte\",\"sources\":[\"Messages.svelte\"],\"sourcesContent\":[\"<script>\\r\\nconst socket = io('http://localhost:3000')\\r\\n\\r\\nexport let event, room, approval\\r\\n\\r\\nlet messages = []\\r\\n\\r\\nsocket.on(event, (res) => {\\r\\n    if(res.room == room){\\r\\n        messages.push(res.message)\\r\\n        messages = messages //Actualizamos la vista de Mensajes\\r\\n        updateComponent()\\r\\n    }\\r\\n})\\r\\n\\r\\nconst approveComment = (message, index) => {\\r\\n    socket.emit('message-approved', {message:message, room:room})\\r\\n    removeItem(index)\\r\\n    console.log('Done')\\r\\n}\\r\\n\\r\\nconst declineComment = (message, index) => {\\r\\n    removeItem(index)\\r\\n    console.log('Done')\\r\\n}\\r\\n\\r\\nconst removeItem = (index) => {\\r\\n    if (index > -1) {\\r\\n        messages.splice(index, 1);\\r\\n    }\\r\\n    messages = messages //Actualizamos la vista de Mensajes\\r\\n    updateComponent()\\r\\n}\\r\\n\\r\\nconst updateComponent = () => {\\r\\n    const box = document.querySelector('.card-content')\\r\\n    box.scrollTop = box.scrollHeight //Hacemos Scroll al final de la caja\\r\\n}\\r\\n\\r\\n</script>\\r\\n\\r\\n<style lang=\\\"scss\\\">.card-content {\\n  height: 30vh;\\n  overflow: scroll; }\\n  .card-content::-webkit-scrollbar {\\n    display: none; }</style>\\r\\n\\r\\n<div class=\\\"card-content has-background-primary-light\\\">\\r\\n    {#each messages as message, index}\\r\\n        <section id=\\\"message{index}\\\" class=\\\"notification message is-white\\\">\\r\\n            <div class=\\\"columns\\\">\\r\\n                <div class=\\\"column is-9\\\">\\r\\n                    <small class=\\\"content is-small has-text-primary\\\">Usuario equis</small><br>\\r\\n                    <span>{message}</span>\\r\\n                </div>\\r\\n                { #if ( approval===true )}\\r\\n                <div class=\\\"column is-3\\\">\\r\\n                    <button on:click={() => {approveComment(message, index)}} class=\\\"button is-primary\\\">Aprobar</button>\\r\\n                    <button on:click={() => {declineComment(message, index)}} class=\\\"button is-danger is-outlined\\\">Eliminar</button>\\r\\n                </div>\\r\\n                {/if}\\r\\n            </div>\\r\\n        </section>\\r\\n    {/each}\\r\\n</div>\\r\\n\"],\"names\":[],\"mappings\":\"AAyCmB,aAAa,eAAC,CAAC,AAChC,MAAM,CAAE,IAAI,CACZ,QAAQ,CAAE,MAAM,AAAE,CAAC,AACnB,4BAAa,mBAAmB,AAAC,CAAC,AAChC,OAAO,CAAE,IAAI,AAAE,CAAC\"}"
+};
+
+const Messages = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	const socket = io("http://localhost:3000");
+	let { event } = $$props, { room } = $$props, { approval } = $$props;
+	let messages = [];
+
+	socket.on(event, res => {
+		if (res.room == room) {
+			messages.push(res.message);
+			messages = messages; //Actualizamos la vista de Mensajes
+			updateComponent();
+		}
+	});
+
+	const updateComponent = () => {
+		const box = document.querySelector(".card-content");
+		box.scrollTop = box.scrollHeight; //Hacemos Scroll al final de la caja
+	};
+
+	if ($$props.event === void 0 && $$bindings.event && event !== void 0) $$bindings.event(event);
+	if ($$props.room === void 0 && $$bindings.room && room !== void 0) $$bindings.room(room);
+	if ($$props.approval === void 0 && $$bindings.approval && approval !== void 0) $$bindings.approval(approval);
+	$$result.css.add(css$a);
+
+	return `<div class="${"card-content has-background-primary-light svelte-1d5lgmj"}">${each(messages, (message, index) => `<section id="${"message" + escape(index)}" class="${"notification message is-white"}"><div class="${"columns"}"><div class="${"column is-9"}"><small class="${"content is-small has-text-primary"}">Usuario equis</small><br>
+                    <span>${escape(message)}</span></div>
+                ${approval === true
+	? `<div class="${"column is-3"}"><button class="${"button is-primary"}">Aprobar</button>
+                    <button class="${"button is-danger is-outlined"}">Eliminar</button>
+                </div>`
+	: ``}</div>
+        </section>`)}</div>`;
+});
+
+/* src\components\Input.svelte generated by Svelte v3.23.0 */
+
+const Input = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	let { event } = $$props; //El evento que emitiremos
+	let { room } = $$props; //La sala a la que emitiremos
+	const socket = io("http://localhost:3000");
+	let message = "";
+
+	if ($$props.event === void 0 && $$bindings.event && event !== void 0) $$bindings.event(event);
+	if ($$props.room === void 0 && $$bindings.room && room !== void 0) $$bindings.room(room);
+
+	return `<div class="${"box is-full-width is-rounded"}"><form action="${""}"><div class="${"columns"}"><div class="${"column is-10"}"><input type="${"text"}" class="${"input"}" placeholder="${"Escribe acá"}"${add_attribute("value", message, 1)}></div>
+            <div class="${"column is-2"}"><button class="${"button"}"><span class="${"icon is-small"}"><i data-feather="${"send"}"></i></span></button></div></div></form></div>`;
+});
+
+/* src\routes\admin\salas\[slug].svelte generated by Svelte v3.23.0 */
+
+const css$b = {
+	code: ".has-background-gradient.svelte-1wli5ss{background:linear-gradient(71deg, #a100e0 0%, #520bd9 100%) !important}.logo.svelte-1wli5ss{mix-blend-mode:multiply}",
+	map: "{\"version\":3,\"file\":\"[slug].svelte\",\"sources\":[\"[slug].svelte\"],\"sourcesContent\":[\"<script context=\\\"module\\\">\\r\\n    import Input from \\\"../../../components/Input.svelte\\\"\\r\\n    import Messages from \\\"../../../components/Messages.svelte\\\"\\r\\n    import Agenda from \\\"../../../components/Agenda.svelte\\\"\\r\\n    import Iframe from \\\"../../../components/Iframe.svelte\\\"\\r\\n    import Encuestas from \\\"../../../components/Encuestas.svelte\\\"\\r\\n    import Trivias from \\\"../../../components/Trivias.svelte\\\"\\r\\n    import RoomChange from \\\"../../../components/RoomChange.svelte\\\"\\r\\n\\r\\n    export async function preload({\\r\\n        params,\\r\\n        query\\r\\n    }) {\\r\\n        // the `slug` parameter is available because\\r\\n        // this file is called [slug].svelte\\r\\n        const res = await this.fetch(`salas/${params.slug}.json`);\\r\\n        const data = await res.json();\\r\\n\\r\\n        if (res.status === 200) {\\r\\n            return {\\r\\n                sala: data\\r\\n            };\\r\\n        } else {\\r\\n            this.error(res.status, data.message);\\r\\n        }\\r\\n    }\\r\\n</script>\\r\\n<script>\\r\\n    /**\\r\\n     * Inner stuff\\r\\n     */\\r\\n\\r\\n    export let sala\\r\\n\\r\\n    const abrirAgenda = () => {\\r\\n        document.querySelector('#agenda-interactiva').classList.toggle('is-active')\\r\\n    }\\r\\n</script>\\r\\n<style lang=\\\"scss\\\">.has-background-gradient {\\n  background: linear-gradient(71deg, #a100e0 0%, #520bd9 100%) !important; }\\n\\n.logo {\\n  mix-blend-mode: multiply; }</style>\\r\\n\\r\\n<svelte:head>\\r\\n    <title>{sala.title} - FIMPU</title>\\r\\n</svelte:head>\\r\\n\\r\\n<section id=\\\"lobby-salas\\\" class=\\\"hero is-fullheight is-light is-relative is-clipped\\\">\\r\\n\\r\\n    <Agenda />\\r\\n\\r\\n    <div class=\\\"hero-header has-padding-30\\\">\\r\\n        <div class=\\\"columns\\\">\\r\\n            <div class=\\\"column is-5\\\"><a href=\\\"/\\\"><img class=\\\"logo\\\" src=\\\"logo-salas.svg\\\" alt=\\\"\\\"></a></div>\\r\\n            <div class=\\\"column is-3 is-offset-4\\\">\\r\\n                <a href=\\\"lobby\\\" class=\\\"button is-primary is-small is-outlined\\\"><span class=\\\"icon is-small\\\"><i\\r\\n                            data-feather=\\\"user\\\"></i></span><span>Perfil</span></a>\\r\\n                <button on:click={abrirAgenda} class=\\\"button is-primary is-small is-outlined\\\"><span\\r\\n                        class=\\\"icon is-small\\\"><i data-feather=\\\"user\\\"></i></span><span>Agenda</span></button>\\r\\n                <a href=\\\"lobby\\\" class=\\\"button is-primary is-small is-outlined\\\"><span class=\\\"icon is-small\\\"><i\\r\\n                            data-feather=\\\"user\\\"></i></span><span>Configuración</span></a>\\r\\n                <a href=\\\"lobby\\\" class=\\\"button is-primary is-small is-outlined\\\"><span class=\\\"icon is-small\\\"><i\\r\\n                            data-feather=\\\"user\\\"></i></span><span>Ayuda</span></a>\\r\\n            </div>\\r\\n        </div>\\r\\n    </div>\\r\\n    <div class=\\\"hero-body\\\">\\r\\n        <div class=\\\"container\\\">\\r\\n            <h2 class=\\\"title is-2\\\">Espacio de Administración para {sala.title}</h2>\\r\\n            <div class=\\\"columns\\\">\\r\\n                <div class=\\\"column is-3\\\"><RoomChange room={sala.slug} admin={true}/></div>\\r\\n                <div class=\\\"column is-3\\\"><Trivias room={sala.slug} admin={true}/></div>\\r\\n                <div class=\\\"column is-3\\\"><Encuestas room={sala.slug} admin={true}/></div>\\r\\n            </div>\\r\\n            <div class=\\\"columns\\\">\\r\\n                <div class=\\\"column is-4\\\">\\r\\n                    <!-- Streamline Central -->\\r\\n                    <div class=\\\"iframe-container box\\\">\\r\\n                        <Input room={sala.slug} event={'streamline'} />\\r\\n                        <Iframe {sala}/>\\r\\n                    </div>\\r\\n                </div>\\r\\n                <div class=\\\"column is-4\\\">\\r\\n                     <!-- Caja de Preguntas -->\\r\\n                     <div class=\\\"comments card\\\">\\r\\n                        <Messages room={sala.slug} event={'question'} />\\r\\n                        <div class=\\\"card-footer has-background-gradient has-padding-20\\\">\\r\\n                            <!-- Componente de envío de eventos -->\\r\\n                            <Input room={sala.slug} event={'question'} />\\r\\n                        </div>\\r\\n                    </div>\\r\\n                </div>\\r\\n                <div class=\\\"column is-4\\\">\\r\\n                    <!-- Caja de Comentarios -->\\r\\n                    <div class=\\\"comments card\\\">\\r\\n                        <Messages approval={true} room={sala.slug} event={'message'} />\\r\\n                        <div class=\\\"card-footer has-background-gradient has-padding-20\\\">\\r\\n                            <!-- Componente de envío de eventos -->\\r\\n                            <Input room={sala.slug} event={'message-approved'} />\\r\\n                        </div>\\r\\n                    </div>\\r\\n                </div>\\r\\n            </div>\\r\\n        </div>\\r\\n    </div>\\r\\n    <div class=\\\"hero-footer\\\">\\r\\n        <img class=\\\"decoration\\\" src=\\\"decoration.svg\\\" alt=\\\"\\\">\\r\\n    </div>\\r\\n</section>\"],\"names\":[],\"mappings\":\"AAsCmB,wBAAwB,eAAC,CAAC,AAC3C,UAAU,CAAE,gBAAgB,KAAK,CAAC,CAAC,OAAO,CAAC,EAAE,CAAC,CAAC,OAAO,CAAC,IAAI,CAAC,CAAC,UAAU,AAAE,CAAC,AAE5E,KAAK,eAAC,CAAC,AACL,cAAc,CAAE,QAAQ,AAAE,CAAC\"}"
+};
+
+async function preload$1({ params, query }) {
+	// the `slug` parameter is available because
+	// this file is called [slug].svelte
+	const res = await this.fetch(`salas/${params.slug}.json`);
+
+	const data = await res.json();
+
+	if (res.status === 200) {
+		return { sala: data };
+	} else {
+		this.error(res.status, data.message);
+	}
+}
+
+const U5Bslugu5D$2 = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	let { sala } = $$props;
+
+	if ($$props.sala === void 0 && $$bindings.sala && sala !== void 0) $$bindings.sala(sala);
+	$$result.css.add(css$b);
+
+	return `${($$result.head += `${($$result.title = `<title>${escape(sala.title)} - FIMPU</title>`, "")}`, "")}
+
+<section id="${"lobby-salas"}" class="${"hero is-fullheight is-light is-relative is-clipped"}">${validate_component(Agenda$1, "Agenda").$$render($$result, {}, {}, {})}
+
+    <div class="${"hero-header has-padding-30"}"><div class="${"columns"}"><div class="${"column is-5"}"><a href="${"/"}"><img class="${"logo svelte-1wli5ss"}" src="${"logo-salas.svg"}" alt="${""}"></a></div>
+            <div class="${"column is-3 is-offset-4"}"><a href="${"lobby"}" class="${"button is-primary is-small is-outlined"}"><span class="${"icon is-small"}"><i data-feather="${"user"}"></i></span><span>Perfil</span></a>
+                <button class="${"button is-primary is-small is-outlined"}"><span class="${"icon is-small"}"><i data-feather="${"user"}"></i></span><span>Agenda</span></button>
+                <a href="${"lobby"}" class="${"button is-primary is-small is-outlined"}"><span class="${"icon is-small"}"><i data-feather="${"user"}"></i></span><span>Configuración</span></a>
+                <a href="${"lobby"}" class="${"button is-primary is-small is-outlined"}"><span class="${"icon is-small"}"><i data-feather="${"user"}"></i></span><span>Ayuda</span></a></div></div></div>
+    <div class="${"hero-body"}"><div class="${"container"}"><h2 class="${"title is-2"}">Espacio de Administración para ${escape(sala.title)}</h2>
+            <div class="${"columns"}"><div class="${"column is-3"}">${validate_component(RoomChange, "RoomChange").$$render($$result, { room: sala.slug, admin: true }, {}, {})}</div>
+                <div class="${"column is-3"}">${validate_component(Trivias, "Trivias").$$render($$result, { room: sala.slug, admin: true }, {}, {})}</div>
+                <div class="${"column is-3"}">${validate_component(Encuestas, "Encuestas").$$render($$result, { room: sala.slug, admin: true }, {}, {})}</div></div>
+            <div class="${"columns"}"><div class="${"column is-4"}">
+                    <div class="${"iframe-container box"}">${validate_component(Input, "Input").$$render($$result, { room: sala.slug, event: "streamline" }, {}, {})}
+                        ${validate_component(Iframe, "Iframe").$$render($$result, { sala }, {}, {})}</div></div>
+                <div class="${"column is-4"}">
+                     <div class="${"comments card"}">${validate_component(Messages, "Messages").$$render($$result, { room: sala.slug, event: "question" }, {}, {})}
+                        <div class="${"card-footer has-background-gradient has-padding-20 svelte-1wli5ss"}">
+                            ${validate_component(Input, "Input").$$render($$result, { room: sala.slug, event: "question" }, {}, {})}</div></div></div>
+                <div class="${"column is-4"}">
+                    <div class="${"comments card"}">${validate_component(Messages, "Messages").$$render(
+		$$result,
+		{
+			approval: true,
+			room: sala.slug,
+			event: "message"
+		},
+		{},
+		{}
+	)}
+                        <div class="${"card-footer has-background-gradient has-padding-20 svelte-1wli5ss"}">
+                            ${validate_component(Input, "Input").$$render(
+		$$result,
+		{
+			room: sala.slug,
+			event: "message-approved"
+		},
+		{},
+		{}
+	)}</div></div></div></div></div></div>
+    <div class="${"hero-footer"}"><img class="${"decoration"}" src="${"decoration.svg"}" alt="${""}"></div></section>`;
+});
+
 /* src\routes\lobby.svelte generated by Svelte v3.23.0 */
 
-const css$8 = {
-	code: "#lobby.svelte-1igxwmn.svelte-1igxwmn{background-position:bottom !important;background-size:cover !important;background-repeat:no-repeat !important}.hover-glow.svelte-1igxwmn.svelte-1igxwmn{transition:ease-out 0.4s}.hover-glow.svelte-1igxwmn.svelte-1igxwmn:hover{filter:drop-shadow(0 0 15px #530BDB)}.screen-container.svelte-1igxwmn.svelte-1igxwmn{position:absolute;left:17%;top:-18vh;width:55vh}.screen-container.svelte-1igxwmn img.svelte-1igxwmn{width:55vh}.screen-container.svelte-1igxwmn .screen-content.svelte-1igxwmn{position:absolute;bottom:0;width:55vh;height:55vh;display:flex;align-items:flex-end;padding:2.65vh}.screen-container.svelte-1igxwmn .screen-content iframe.svelte-1igxwmn{width:100% !important;height:60.25% !important;background:#00121f}.menu-container.svelte-1igxwmn.svelte-1igxwmn{position:absolute;left:7%;bottom:-5vh;width:30vh;perspective:1000px;perspective-origin:50% 38%}.menu-container.svelte-1igxwmn img.svelte-1igxwmn{width:30vh}.menu-container.svelte-1igxwmn .menu-content.svelte-1igxwmn{position:absolute;top:50%;left:50%;max-width:100%;transform:translate(-43%, -69%) scale(0.7) rotate3d(0, 1, 0, 18deg)}.menu-container.svelte-1igxwmn .menu-content .button.svelte-1igxwmn{font-size:1.8vh;white-space:unset;height:auto;width:22vh;justify-content:space-between;text-align:right;margin-bottom:1vh}.menu-container.svelte-1igxwmn .menu-content .title.svelte-1igxwmn{font-size:2.6vh}.pedestal-container.svelte-1igxwmn.svelte-1igxwmn{position:absolute;right:10%;bottom:-5vh;max-width:30vh;transform:translateY(45%)}.button.is-control.svelte-1igxwmn.svelte-1igxwmn{position:absolute;background:white}.button.is-control.stands.svelte-1igxwmn.svelte-1igxwmn{left:22%;transform:translateY(-5vh)}.button.is-control.auditorio1.svelte-1igxwmn.svelte-1igxwmn{right:12%;transform:translateY(-10vh)}.button.is-control.auditorio2.svelte-1igxwmn.svelte-1igxwmn{left:54%;transform:translate(-15vh, -5vh)}.button.is-control.auditorio3.svelte-1igxwmn.svelte-1igxwmn{left:40%;transform:translate(-15vh, 2vh)}",
-	map: "{\"version\":3,\"file\":\"lobby.svelte\",\"sources\":[\"lobby.svelte\"],\"sourcesContent\":[\"<style lang=\\\"scss\\\">#lobby {\\n  background-position: bottom !important;\\n  background-size: cover !important;\\n  background-repeat: no-repeat !important; }\\n\\n.hover-glow {\\n  transition: ease-out 0.4s; }\\n  .hover-glow:hover {\\n    filter: drop-shadow(0 0 15px #530BDB); }\\n\\n.screen-container {\\n  position: absolute;\\n  left: 17%;\\n  top: -18vh;\\n  width: 55vh; }\\n  .screen-container img {\\n    width: 55vh; }\\n  .screen-container .screen-content {\\n    position: absolute;\\n    bottom: 0;\\n    width: 55vh;\\n    height: 55vh;\\n    display: flex;\\n    align-items: flex-end;\\n    padding: 2.65vh; }\\n    .screen-container .screen-content iframe {\\n      width: 100% !important;\\n      height: 60.25% !important;\\n      background: #00121f; }\\n\\n.menu-container {\\n  position: absolute;\\n  left: 7%;\\n  bottom: -5vh;\\n  width: 30vh;\\n  perspective: 1000px;\\n  perspective-origin: 50% 38%; }\\n  .menu-container img {\\n    width: 30vh; }\\n  .menu-container .menu-content {\\n    position: absolute;\\n    top: 50%;\\n    left: 50%;\\n    max-width: 100%;\\n    transform: translate(-43%, -69%) scale(0.7) rotate3d(0, 1, 0, 18deg); }\\n    .menu-container .menu-content .button {\\n      font-size: 1.8vh;\\n      white-space: unset;\\n      height: auto;\\n      width: 22vh;\\n      justify-content: space-between;\\n      text-align: right;\\n      margin-bottom: 1vh; }\\n    .menu-container .menu-content .title {\\n      font-size: 2.6vh; }\\n\\n.pedestal-container {\\n  position: absolute;\\n  right: 10%;\\n  bottom: -5vh;\\n  max-width: 30vh;\\n  transform: translateY(45%); }\\n\\n.button.is-control {\\n  position: absolute;\\n  background: white; }\\n  .button.is-control.stands {\\n    left: 22%;\\n    transform: translateY(-5vh); }\\n  .button.is-control.auditorio1 {\\n    right: 12%;\\n    transform: translateY(-10vh); }\\n  .button.is-control.auditorio2 {\\n    left: 54%;\\n    transform: translate(-15vh, -5vh); }\\n  .button.is-control.auditorio3 {\\n    left: 40%;\\n    transform: translate(-15vh, 2vh); }</style>\\r\\n\\r\\n<script>\\r\\n    import Agenda from '../components/Agenda.svelte'\\r\\n    \\r\\n    const abrirAgenda = () => {\\r\\n        document.querySelector('#agenda-interactiva').classList.toggle('is-active')\\r\\n    }\\r\\n</script>\\r\\n\\r\\n<svelte:head>\\r\\n\\t<title>FIMPU 2020</title>\\r\\n</svelte:head>\\r\\n\\r\\n\\r\\n\\r\\n<div id=\\\"lobby\\\" style=\\\"background: url('lobby.jpg');\\\" class=\\\"hero is-fullheight is-relative is-primary is-clipped\\\">\\r\\n\\t<div class=\\\"hero-body\\\">\\r\\n\\t\\t<!-- Pantalla -->\\r\\n\\t\\t<div class=\\\"screen-container hover-glow\\\">\\r\\n            <img src=\\\"screen.png\\\" alt=\\\"\\\">\\r\\n            <div class=\\\"screen-content\\\">\\r\\n                <iframe title=\\\"streamline\\\" width=\\\"1280\\\" height=\\\"720\\\" src=\\\"https://player.vimeo.com/video/481770682\\\" frameborder=\\\"0\\\" allow=\\\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\\\" allowfullscreen></iframe>\\r\\n            </div>\\r\\n\\t\\t</div>\\r\\n\\t\\t<!-- Info -->\\r\\n\\t\\t<div class=\\\"pedestal-container hover-glow\\\">\\r\\n\\t\\t\\t<img src=\\\"pedestal.png\\\" alt=\\\"\\\">\\r\\n\\t\\t</div>\\r\\n\\t\\t<!-- Menú -->\\r\\n\\t\\t<div class=\\\"menu-container hover-glow\\\">\\r\\n            <img src=\\\"menu.png\\\" alt=\\\"\\\">\\r\\n            <div class=\\\"menu-content has-text-centered\\\">\\r\\n                <h3 class=\\\"title is-3 has-text-primary\\\">Bienvenidos</h3>\\r\\n                <button on:click={abrirAgenda} class=\\\"button has-text-weight-bold is-primary is-outlined is-uppercase\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"calendar\\\"></i></span><span>Agenda</span></button>\\r\\n                <a href=\\\"/salas/auditorio\\\" class=\\\"button has-text-weight-bold is-primary is-outlined is-uppercase\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span><span>Auditorio Principal</span></a>\\r\\n                <a href=\\\"/memorias/2019\\\" class=\\\"button has-text-weight-bold is-primary is-outlined is-uppercase\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span><span>Memorias 2019</span></a>\\r\\n                <a href=\\\"/memorias/2020\\\" class=\\\"button has-text-weight-bold is-primary is-outlined is-uppercase\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span><span>Memorias 2020</span></a>\\r\\n                <a href=\\\"/medios\\\" class=\\\"button has-text-weight-bold is-primary is-outlined is-uppercase\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Salón de Medios Públicos</span></a>\\r\\n            </div>\\r\\n        </div>\\r\\n        <div class=\\\"controls-container\\\">\\r\\n            <a href=\\\"/medios\\\" class=\\\"button is-rounded is-small is-primary is-outlined is-uppercase has-text-weight-bold is-control stands\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Salón de Medios Públicos</span></a>\\r\\n            <a href=\\\"/salas/auditorio\\\" class=\\\"button is-rounded is-small is-primary is-outlined is-uppercase has-text-weight-bold is-control auditorio1\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span><span>Auditorio Principal</span></a>\\r\\n            <a href=\\\"/salas/1\\\" class=\\\"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control auditorio2\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span><span>Sala 1</span></a>\\r\\n            <a href=\\\"/salas/2\\\" class=\\\"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control auditorio3\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span><span>Sala 2</span></a>\\r\\n        </div>\\r\\n    </div>\\r\\n    <Agenda/>\\r\\n</div>\\r\\n\\r\\n\"],\"names\":[],\"mappings\":\"AAAmB,MAAM,8BAAC,CAAC,AACzB,mBAAmB,CAAE,MAAM,CAAC,UAAU,CACtC,eAAe,CAAE,KAAK,CAAC,UAAU,CACjC,iBAAiB,CAAE,SAAS,CAAC,UAAU,AAAE,CAAC,AAE5C,WAAW,8BAAC,CAAC,AACX,UAAU,CAAE,QAAQ,CAAC,IAAI,AAAE,CAAC,AAC5B,yCAAW,MAAM,AAAC,CAAC,AACjB,MAAM,CAAE,YAAY,CAAC,CAAC,CAAC,CAAC,IAAI,CAAC,OAAO,CAAC,AAAE,CAAC,AAE5C,iBAAiB,8BAAC,CAAC,AACjB,QAAQ,CAAE,QAAQ,CAClB,IAAI,CAAE,GAAG,CACT,GAAG,CAAE,KAAK,CACV,KAAK,CAAE,IAAI,AAAE,CAAC,AACd,gCAAiB,CAAC,GAAG,eAAC,CAAC,AACrB,KAAK,CAAE,IAAI,AAAE,CAAC,AAChB,gCAAiB,CAAC,eAAe,eAAC,CAAC,AACjC,QAAQ,CAAE,QAAQ,CAClB,MAAM,CAAE,CAAC,CACT,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,IAAI,CACZ,OAAO,CAAE,IAAI,CACb,WAAW,CAAE,QAAQ,CACrB,OAAO,CAAE,MAAM,AAAE,CAAC,AAClB,gCAAiB,CAAC,eAAe,CAAC,MAAM,eAAC,CAAC,AACxC,KAAK,CAAE,IAAI,CAAC,UAAU,CACtB,MAAM,CAAE,MAAM,CAAC,UAAU,CACzB,UAAU,CAAE,OAAO,AAAE,CAAC,AAE5B,eAAe,8BAAC,CAAC,AACf,QAAQ,CAAE,QAAQ,CAClB,IAAI,CAAE,EAAE,CACR,MAAM,CAAE,IAAI,CACZ,KAAK,CAAE,IAAI,CACX,WAAW,CAAE,MAAM,CACnB,kBAAkB,CAAE,GAAG,CAAC,GAAG,AAAE,CAAC,AAC9B,8BAAe,CAAC,GAAG,eAAC,CAAC,AACnB,KAAK,CAAE,IAAI,AAAE,CAAC,AAChB,8BAAe,CAAC,aAAa,eAAC,CAAC,AAC7B,QAAQ,CAAE,QAAQ,CAClB,GAAG,CAAE,GAAG,CACR,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,IAAI,CACf,SAAS,CAAE,UAAU,IAAI,CAAC,CAAC,IAAI,CAAC,CAAC,MAAM,GAAG,CAAC,CAAC,SAAS,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,KAAK,CAAC,AAAE,CAAC,AACvE,8BAAe,CAAC,aAAa,CAAC,OAAO,eAAC,CAAC,AACrC,SAAS,CAAE,KAAK,CAChB,WAAW,CAAE,KAAK,CAClB,MAAM,CAAE,IAAI,CACZ,KAAK,CAAE,IAAI,CACX,eAAe,CAAE,aAAa,CAC9B,UAAU,CAAE,KAAK,CACjB,aAAa,CAAE,GAAG,AAAE,CAAC,AACvB,8BAAe,CAAC,aAAa,CAAC,MAAM,eAAC,CAAC,AACpC,SAAS,CAAE,KAAK,AAAE,CAAC,AAEzB,mBAAmB,8BAAC,CAAC,AACnB,QAAQ,CAAE,QAAQ,CAClB,KAAK,CAAE,GAAG,CACV,MAAM,CAAE,IAAI,CACZ,SAAS,CAAE,IAAI,CACf,SAAS,CAAE,WAAW,GAAG,CAAC,AAAE,CAAC,AAE/B,OAAO,WAAW,8BAAC,CAAC,AAClB,QAAQ,CAAE,QAAQ,CAClB,UAAU,CAAE,KAAK,AAAE,CAAC,AACpB,OAAO,WAAW,OAAO,8BAAC,CAAC,AACzB,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,WAAW,IAAI,CAAC,AAAE,CAAC,AAChC,OAAO,WAAW,WAAW,8BAAC,CAAC,AAC7B,KAAK,CAAE,GAAG,CACV,SAAS,CAAE,WAAW,KAAK,CAAC,AAAE,CAAC,AACjC,OAAO,WAAW,WAAW,8BAAC,CAAC,AAC7B,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,UAAU,KAAK,CAAC,CAAC,IAAI,CAAC,AAAE,CAAC,AACtC,OAAO,WAAW,WAAW,8BAAC,CAAC,AAC7B,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,UAAU,KAAK,CAAC,CAAC,GAAG,CAAC,AAAE,CAAC\"}"
+const css$c = {
+	code: "#lobby.svelte-1s3sjh9.svelte-1s3sjh9{background-position:bottom !important;background-size:cover !important;background-repeat:no-repeat !important}.hover-glow.svelte-1s3sjh9.svelte-1s3sjh9{transition:ease-out 0.4s}.hover-glow.svelte-1s3sjh9.svelte-1s3sjh9:hover{filter:drop-shadow(0 0 15px #530BDB)}.screen-container.svelte-1s3sjh9.svelte-1s3sjh9{position:absolute;left:17%;top:-18vh;width:55vh}.screen-container.svelte-1s3sjh9 img.svelte-1s3sjh9{width:55vh}.screen-container.svelte-1s3sjh9 .screen-content.svelte-1s3sjh9{position:absolute;bottom:0;width:55vh;height:55vh;display:flex;align-items:flex-end;padding:2.65vh}.screen-container.svelte-1s3sjh9 .screen-content iframe.svelte-1s3sjh9{width:100% !important;height:60.25% !important;background:#00121f}.menu-container.svelte-1s3sjh9.svelte-1s3sjh9{position:absolute;left:7%;bottom:-5vh;width:30vh;perspective:1000px;perspective-origin:50% 38%}.menu-container.svelte-1s3sjh9 img.svelte-1s3sjh9{width:30vh}.menu-container.svelte-1s3sjh9 .menu-content.svelte-1s3sjh9{position:absolute;top:50%;left:50%;max-width:100%;transform:translate(-43%, -69%) scale(0.7) rotate3d(0, 1, 0, 18deg)}.menu-container.svelte-1s3sjh9 .menu-content .button.svelte-1s3sjh9{font-size:1.8vh;white-space:unset;height:auto;width:22vh;justify-content:space-between;text-align:right;margin-bottom:1vh}.menu-container.svelte-1s3sjh9 .menu-content .title.svelte-1s3sjh9{font-size:2.6vh}.pedestal-container.svelte-1s3sjh9.svelte-1s3sjh9{position:absolute;right:10%;bottom:-5vh;max-width:30vh;transform:translateY(45%)}.button.is-control.svelte-1s3sjh9.svelte-1s3sjh9{position:absolute}.button.is-control.stands.svelte-1s3sjh9.svelte-1s3sjh9{left:22%;transform:translateY(-5vh)}.button.is-control.auditorio1.svelte-1s3sjh9.svelte-1s3sjh9{right:12%;transform:translateY(-10vh)}.button.is-control.auditorio2.svelte-1s3sjh9.svelte-1s3sjh9{left:54%;transform:translate(-15vh, -5vh)}.button.is-control.auditorio3.svelte-1s3sjh9.svelte-1s3sjh9{left:40%;transform:translate(-15vh, 2vh)}",
+	map: "{\"version\":3,\"file\":\"lobby.svelte\",\"sources\":[\"lobby.svelte\"],\"sourcesContent\":[\"<style lang=\\\"scss\\\">#lobby {\\n  background-position: bottom !important;\\n  background-size: cover !important;\\n  background-repeat: no-repeat !important; }\\n\\n.hover-glow {\\n  transition: ease-out 0.4s; }\\n  .hover-glow:hover {\\n    filter: drop-shadow(0 0 15px #530BDB); }\\n\\n.screen-container {\\n  position: absolute;\\n  left: 17%;\\n  top: -18vh;\\n  width: 55vh; }\\n  .screen-container img {\\n    width: 55vh; }\\n  .screen-container .screen-content {\\n    position: absolute;\\n    bottom: 0;\\n    width: 55vh;\\n    height: 55vh;\\n    display: flex;\\n    align-items: flex-end;\\n    padding: 2.65vh; }\\n    .screen-container .screen-content iframe {\\n      width: 100% !important;\\n      height: 60.25% !important;\\n      background: #00121f; }\\n\\n.menu-container {\\n  position: absolute;\\n  left: 7%;\\n  bottom: -5vh;\\n  width: 30vh;\\n  perspective: 1000px;\\n  perspective-origin: 50% 38%; }\\n  .menu-container img {\\n    width: 30vh; }\\n  .menu-container .menu-content {\\n    position: absolute;\\n    top: 50%;\\n    left: 50%;\\n    max-width: 100%;\\n    transform: translate(-43%, -69%) scale(0.7) rotate3d(0, 1, 0, 18deg); }\\n    .menu-container .menu-content .button {\\n      font-size: 1.8vh;\\n      white-space: unset;\\n      height: auto;\\n      width: 22vh;\\n      justify-content: space-between;\\n      text-align: right;\\n      margin-bottom: 1vh; }\\n    .menu-container .menu-content .title {\\n      font-size: 2.6vh; }\\n\\n.pedestal-container {\\n  position: absolute;\\n  right: 10%;\\n  bottom: -5vh;\\n  max-width: 30vh;\\n  transform: translateY(45%); }\\n\\n.button.is-control {\\n  position: absolute; }\\n  .button.is-control.stands {\\n    left: 22%;\\n    transform: translateY(-5vh); }\\n  .button.is-control.auditorio1 {\\n    right: 12%;\\n    transform: translateY(-10vh); }\\n  .button.is-control.auditorio2 {\\n    left: 54%;\\n    transform: translate(-15vh, -5vh); }\\n  .button.is-control.auditorio3 {\\n    left: 40%;\\n    transform: translate(-15vh, 2vh); }</style>\\r\\n\\r\\n<script>\\r\\n    import Agenda from '../components/Agenda.svelte'\\r\\n    import {onMount} from 'svelte'\\r\\n    import Player from '@vimeo/player'\\r\\n\\r\\n    \\r\\n\\r\\n    const abrirAgenda = () => {\\r\\n        document.querySelector('#agenda-interactiva').classList.toggle('is-active')\\r\\n    }\\r\\n\\r\\n    const hideModal = () => {\\r\\n        document.querySelector('#inicio').classList.remove('is-active')\\r\\n    }\\r\\n\\r\\n    onMount(() => {\\r\\n        if(localStorage.getItem('firstTime') === 'false') hideModal()\\r\\n        const iframe = document.querySelector('#lobby-loop')\\r\\n        const lobbyloop = new Player(iframe)\\r\\n        lobbyloop.setMuted(true)\\r\\n        lobbyloop.setLoop(true)\\r\\n        lobbyloop.play()\\r\\n        localStorage.setItem('firstTime','false');\\r\\n        console.log(localStorage)\\r\\n\\r\\n    })\\r\\n\\r\\n\\r\\n    \\r\\n</script>\\r\\n\\r\\n<svelte:head>\\r\\n    <title>FIMPU 2020</title>\\r\\n</svelte:head>\\r\\n\\r\\n\\r\\n\\r\\n<div id=\\\"lobby\\\" style=\\\"background: url('lobby.jpg');\\\" class=\\\"hero is-fullheight is-relative is-primary is-clipped\\\">\\r\\n    <div class=\\\"hero-body\\\">\\r\\n        <!-- Pantalla -->\\r\\n        <div class=\\\"screen-container hover-glow\\\">\\r\\n            <img src=\\\"screen.png\\\" alt=\\\"\\\">\\r\\n            <div class=\\\"screen-content\\\">\\r\\n                <iframe id=\\\"lobby-loop\\\"  title=\\\"streamline\\\" width=\\\"1280\\\" height=\\\"720\\\" src=\\\"https://player.vimeo.com/video/482797612\\\"\\r\\n                    frameborder=\\\"0\\\"\\r\\n                    allow=\\\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\\\"\\r\\n                    allowfullscreen></iframe>\\r\\n            </div>\\r\\n        </div>\\r\\n        <!-- Info -->\\r\\n        <div class=\\\"pedestal-container hover-glow\\\">\\r\\n            <img src=\\\"pedestal.png\\\" alt=\\\"\\\">\\r\\n        </div>\\r\\n        <!-- Menú -->\\r\\n        <div class=\\\"menu-container hover-glow\\\">\\r\\n            <img src=\\\"menu.png\\\" alt=\\\"\\\">\\r\\n            <div class=\\\"menu-content has-text-centered\\\">\\r\\n                <h3 class=\\\"title is-3 has-text-primary\\\">Bienvenidos</h3>\\r\\n                <button on:click={abrirAgenda}\\r\\n                    class=\\\"button has-text-weight-bold is-primary is-outlined is-uppercase\\\"><span\\r\\n                        class=\\\"icon is-small\\\"><i data-feather=\\\"calendar\\\"></i></span><span>Agenda</span></button>\\r\\n                <a href=\\\"/salas/auditorio\\\" class=\\\"button has-text-weight-bold is-primary is-outlined is-uppercase\\\"><span\\r\\n                        class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span><span>Auditorio Principal</span></a>\\r\\n                <a href=\\\"/memorias/2019\\\" class=\\\"button has-text-weight-bold is-primary is-outlined is-uppercase\\\"><span\\r\\n                        class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span><span>Memorias 2019</span></a>\\r\\n                <a href=\\\"/memorias/2020\\\" class=\\\"button has-text-weight-bold is-primary is-outlined is-uppercase\\\"><span\\r\\n                        class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span><span>Memorias 2020</span></a>\\r\\n                <a href=\\\"/medios\\\" class=\\\"button has-text-weight-bold is-primary is-outlined is-uppercase\\\"><span\\r\\n                        class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Salón de Medios\\r\\n                        Públicos</span></a>\\r\\n            </div>\\r\\n        </div>\\r\\n        <div class=\\\"controls-container\\\">\\r\\n            <a href=\\\"/medios\\\"\\r\\n                class=\\\"button is-rounded is-small is-primary is-uppercase has-text-weight-bold is-control stands\\\"><span\\r\\n                    class=\\\"icon is-small\\\"><i data-feather=\\\"share-2\\\"></i></span><span>Salón de Medios Públicos</span></a>\\r\\n            <a href=\\\"/salas/auditorio\\\"\\r\\n                class=\\\"button is-rounded is-small is-primary is-uppercase has-text-weight-bold is-control auditorio1\\\"><span\\r\\n                    class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span><span>Auditorio Principal</span></a>\\r\\n            <a href=\\\"/salas/1\\\"\\r\\n                class=\\\"button is-rounded is-primary is-uppercase has-text-weight-bold is-control auditorio2\\\"><span\\r\\n                    class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span><span>Sala 1</span></a>\\r\\n            <a href=\\\"/salas/2\\\"\\r\\n                class=\\\"button is-rounded is-primary is-uppercase has-text-weight-bold is-control auditorio3\\\"><span\\r\\n                    class=\\\"icon is-small\\\"><i data-feather=\\\"users\\\"></i></span><span>Sala 2</span></a>\\r\\n        </div>\\r\\n    </div>\\r\\n    <Agenda />\\r\\n</div>\\r\\n\\r\\n<div id=\\\"inicio\\\" class=\\\"modal is-active\\\">\\r\\n    <div class=\\\"modal-background\\\"></div>\\r\\n    <div class=\\\"modal-content\\\">\\r\\n        <iframe title=\\\"streamline\\\" style=\\\"width: 100%; height:50vh\\\" src=\\\"https://player.vimeo.com/video/482797612\\\"\\r\\n            frameborder=\\\"0\\\" allow=\\\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\\\"\\r\\n            allowfullscreen></iframe>\\r\\n    </div>\\r\\n    <button on:click={hideModal} class=\\\"modal-close is-large\\\" aria-label=\\\"close\\\"></button>\\r\\n</div>\"],\"names\":[],\"mappings\":\"AAAmB,MAAM,8BAAC,CAAC,AACzB,mBAAmB,CAAE,MAAM,CAAC,UAAU,CACtC,eAAe,CAAE,KAAK,CAAC,UAAU,CACjC,iBAAiB,CAAE,SAAS,CAAC,UAAU,AAAE,CAAC,AAE5C,WAAW,8BAAC,CAAC,AACX,UAAU,CAAE,QAAQ,CAAC,IAAI,AAAE,CAAC,AAC5B,yCAAW,MAAM,AAAC,CAAC,AACjB,MAAM,CAAE,YAAY,CAAC,CAAC,CAAC,CAAC,IAAI,CAAC,OAAO,CAAC,AAAE,CAAC,AAE5C,iBAAiB,8BAAC,CAAC,AACjB,QAAQ,CAAE,QAAQ,CAClB,IAAI,CAAE,GAAG,CACT,GAAG,CAAE,KAAK,CACV,KAAK,CAAE,IAAI,AAAE,CAAC,AACd,gCAAiB,CAAC,GAAG,eAAC,CAAC,AACrB,KAAK,CAAE,IAAI,AAAE,CAAC,AAChB,gCAAiB,CAAC,eAAe,eAAC,CAAC,AACjC,QAAQ,CAAE,QAAQ,CAClB,MAAM,CAAE,CAAC,CACT,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,IAAI,CACZ,OAAO,CAAE,IAAI,CACb,WAAW,CAAE,QAAQ,CACrB,OAAO,CAAE,MAAM,AAAE,CAAC,AAClB,gCAAiB,CAAC,eAAe,CAAC,MAAM,eAAC,CAAC,AACxC,KAAK,CAAE,IAAI,CAAC,UAAU,CACtB,MAAM,CAAE,MAAM,CAAC,UAAU,CACzB,UAAU,CAAE,OAAO,AAAE,CAAC,AAE5B,eAAe,8BAAC,CAAC,AACf,QAAQ,CAAE,QAAQ,CAClB,IAAI,CAAE,EAAE,CACR,MAAM,CAAE,IAAI,CACZ,KAAK,CAAE,IAAI,CACX,WAAW,CAAE,MAAM,CACnB,kBAAkB,CAAE,GAAG,CAAC,GAAG,AAAE,CAAC,AAC9B,8BAAe,CAAC,GAAG,eAAC,CAAC,AACnB,KAAK,CAAE,IAAI,AAAE,CAAC,AAChB,8BAAe,CAAC,aAAa,eAAC,CAAC,AAC7B,QAAQ,CAAE,QAAQ,CAClB,GAAG,CAAE,GAAG,CACR,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,IAAI,CACf,SAAS,CAAE,UAAU,IAAI,CAAC,CAAC,IAAI,CAAC,CAAC,MAAM,GAAG,CAAC,CAAC,SAAS,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,KAAK,CAAC,AAAE,CAAC,AACvE,8BAAe,CAAC,aAAa,CAAC,OAAO,eAAC,CAAC,AACrC,SAAS,CAAE,KAAK,CAChB,WAAW,CAAE,KAAK,CAClB,MAAM,CAAE,IAAI,CACZ,KAAK,CAAE,IAAI,CACX,eAAe,CAAE,aAAa,CAC9B,UAAU,CAAE,KAAK,CACjB,aAAa,CAAE,GAAG,AAAE,CAAC,AACvB,8BAAe,CAAC,aAAa,CAAC,MAAM,eAAC,CAAC,AACpC,SAAS,CAAE,KAAK,AAAE,CAAC,AAEzB,mBAAmB,8BAAC,CAAC,AACnB,QAAQ,CAAE,QAAQ,CAClB,KAAK,CAAE,GAAG,CACV,MAAM,CAAE,IAAI,CACZ,SAAS,CAAE,IAAI,CACf,SAAS,CAAE,WAAW,GAAG,CAAC,AAAE,CAAC,AAE/B,OAAO,WAAW,8BAAC,CAAC,AAClB,QAAQ,CAAE,QAAQ,AAAE,CAAC,AACrB,OAAO,WAAW,OAAO,8BAAC,CAAC,AACzB,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,WAAW,IAAI,CAAC,AAAE,CAAC,AAChC,OAAO,WAAW,WAAW,8BAAC,CAAC,AAC7B,KAAK,CAAE,GAAG,CACV,SAAS,CAAE,WAAW,KAAK,CAAC,AAAE,CAAC,AACjC,OAAO,WAAW,WAAW,8BAAC,CAAC,AAC7B,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,UAAU,KAAK,CAAC,CAAC,IAAI,CAAC,AAAE,CAAC,AACtC,OAAO,WAAW,WAAW,8BAAC,CAAC,AAC7B,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,UAAU,KAAK,CAAC,CAAC,GAAG,CAAC,AAAE,CAAC\"}"
 };
 
 const Lobby = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
 
-	$$result.css.add(css$8);
+	const hideModal = () => {
+		document.querySelector("#inicio").classList.remove("is-active");
+	};
+
+	onMount(() => {
+		if (localStorage.getItem("firstTime") === "false") hideModal();
+		const iframe = document.querySelector("#lobby-loop");
+		const lobbyloop = new Player(iframe);
+		lobbyloop.setMuted(true);
+		lobbyloop.setLoop(true);
+		lobbyloop.play();
+		localStorage.setItem("firstTime", "false");
+		console.log(localStorage);
+	});
+
+	$$result.css.add(css$c);
 
 	return `${($$result.head += `${($$result.title = `<title>FIMPU 2020</title>`, "")}`, "")}
 
 
 
-<div id="${"lobby"}" style="${"background: url('lobby.jpg');"}" class="${"hero is-fullheight is-relative is-primary is-clipped svelte-1igxwmn"}"><div class="${"hero-body"}">
-		<div class="${"screen-container hover-glow svelte-1igxwmn"}"><img src="${"screen.png"}" alt="${""}" class="${"svelte-1igxwmn"}">
-            <div class="${"screen-content svelte-1igxwmn"}"><iframe title="${"streamline"}" width="${"1280"}" height="${"720"}" src="${"https://player.vimeo.com/video/481770682"}" frameborder="${"0"}" allow="${"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"}" allowfullscreen class="${"svelte-1igxwmn"}"></iframe></div></div>
-		
-		<div class="${"pedestal-container hover-glow svelte-1igxwmn"}"><img src="${"pedestal.png"}" alt="${""}"></div>
-		
-		<div class="${"menu-container hover-glow svelte-1igxwmn"}"><img src="${"menu.png"}" alt="${""}" class="${"svelte-1igxwmn"}">
-            <div class="${"menu-content has-text-centered svelte-1igxwmn"}"><h3 class="${"title is-3 has-text-primary svelte-1igxwmn"}">Bienvenidos</h3>
-                <button class="${"button has-text-weight-bold is-primary is-outlined is-uppercase svelte-1igxwmn"}"><span class="${"icon is-small"}"><i data-feather="${"calendar"}"></i></span><span>Agenda</span></button>
-                <a href="${"/salas/auditorio"}" class="${"button has-text-weight-bold is-primary is-outlined is-uppercase svelte-1igxwmn"}"><span class="${"icon is-small"}"><i data-feather="${"users"}"></i></span><span>Auditorio Principal</span></a>
-                <a href="${"/memorias/2019"}" class="${"button has-text-weight-bold is-primary is-outlined is-uppercase svelte-1igxwmn"}"><span class="${"icon is-small"}"><i data-feather="${"users"}"></i></span><span>Memorias 2019</span></a>
-                <a href="${"/memorias/2020"}" class="${"button has-text-weight-bold is-primary is-outlined is-uppercase svelte-1igxwmn"}"><span class="${"icon is-small"}"><i data-feather="${"users"}"></i></span><span>Memorias 2020</span></a>
-                <a href="${"/medios"}" class="${"button has-text-weight-bold is-primary is-outlined is-uppercase svelte-1igxwmn"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Salón de Medios Públicos</span></a></div></div>
-        <div class="${"controls-container"}"><a href="${"/medios"}" class="${"button is-rounded is-small is-primary is-outlined is-uppercase has-text-weight-bold is-control stands svelte-1igxwmn"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Salón de Medios Públicos</span></a>
-            <a href="${"/salas/auditorio"}" class="${"button is-rounded is-small is-primary is-outlined is-uppercase has-text-weight-bold is-control auditorio1 svelte-1igxwmn"}"><span class="${"icon is-small"}"><i data-feather="${"users"}"></i></span><span>Auditorio Principal</span></a>
-            <a href="${"/salas/1"}" class="${"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control auditorio2 svelte-1igxwmn"}"><span class="${"icon is-small"}"><i data-feather="${"users"}"></i></span><span>Sala 1</span></a>
-            <a href="${"/salas/2"}" class="${"button is-rounded is-primary is-outlined is-uppercase has-text-weight-bold is-control auditorio3 svelte-1igxwmn"}"><span class="${"icon is-small"}"><i data-feather="${"users"}"></i></span><span>Sala 2</span></a></div></div>
-    ${validate_component(Agenda, "Agenda").$$render($$result, {}, {}, {})}</div>`;
+<div id="${"lobby"}" style="${"background: url('lobby.jpg');"}" class="${"hero is-fullheight is-relative is-primary is-clipped svelte-1s3sjh9"}"><div class="${"hero-body"}">
+        <div class="${"screen-container hover-glow svelte-1s3sjh9"}"><img src="${"screen.png"}" alt="${""}" class="${"svelte-1s3sjh9"}">
+            <div class="${"screen-content svelte-1s3sjh9"}"><iframe id="${"lobby-loop"}" title="${"streamline"}" width="${"1280"}" height="${"720"}" src="${"https://player.vimeo.com/video/482797612"}" frameborder="${"0"}" allow="${"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"}" allowfullscreen class="${"svelte-1s3sjh9"}"></iframe></div></div>
+        
+        <div class="${"pedestal-container hover-glow svelte-1s3sjh9"}"><img src="${"pedestal.png"}" alt="${""}"></div>
+        
+        <div class="${"menu-container hover-glow svelte-1s3sjh9"}"><img src="${"menu.png"}" alt="${""}" class="${"svelte-1s3sjh9"}">
+            <div class="${"menu-content has-text-centered svelte-1s3sjh9"}"><h3 class="${"title is-3 has-text-primary svelte-1s3sjh9"}">Bienvenidos</h3>
+                <button class="${"button has-text-weight-bold is-primary is-outlined is-uppercase svelte-1s3sjh9"}"><span class="${"icon is-small"}"><i data-feather="${"calendar"}"></i></span><span>Agenda</span></button>
+                <a href="${"/salas/auditorio"}" class="${"button has-text-weight-bold is-primary is-outlined is-uppercase svelte-1s3sjh9"}"><span class="${"icon is-small"}"><i data-feather="${"users"}"></i></span><span>Auditorio Principal</span></a>
+                <a href="${"/memorias/2019"}" class="${"button has-text-weight-bold is-primary is-outlined is-uppercase svelte-1s3sjh9"}"><span class="${"icon is-small"}"><i data-feather="${"users"}"></i></span><span>Memorias 2019</span></a>
+                <a href="${"/memorias/2020"}" class="${"button has-text-weight-bold is-primary is-outlined is-uppercase svelte-1s3sjh9"}"><span class="${"icon is-small"}"><i data-feather="${"users"}"></i></span><span>Memorias 2020</span></a>
+                <a href="${"/medios"}" class="${"button has-text-weight-bold is-primary is-outlined is-uppercase svelte-1s3sjh9"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Salón de Medios
+                        Públicos</span></a></div></div>
+        <div class="${"controls-container"}"><a href="${"/medios"}" class="${"button is-rounded is-small is-primary is-uppercase has-text-weight-bold is-control stands svelte-1s3sjh9"}"><span class="${"icon is-small"}"><i data-feather="${"share-2"}"></i></span><span>Salón de Medios Públicos</span></a>
+            <a href="${"/salas/auditorio"}" class="${"button is-rounded is-small is-primary is-uppercase has-text-weight-bold is-control auditorio1 svelte-1s3sjh9"}"><span class="${"icon is-small"}"><i data-feather="${"users"}"></i></span><span>Auditorio Principal</span></a>
+            <a href="${"/salas/1"}" class="${"button is-rounded is-primary is-uppercase has-text-weight-bold is-control auditorio2 svelte-1s3sjh9"}"><span class="${"icon is-small"}"><i data-feather="${"users"}"></i></span><span>Sala 1</span></a>
+            <a href="${"/salas/2"}" class="${"button is-rounded is-primary is-uppercase has-text-weight-bold is-control auditorio3 svelte-1s3sjh9"}"><span class="${"icon is-small"}"><i data-feather="${"users"}"></i></span><span>Sala 2</span></a></div></div>
+    ${validate_component(Agenda$1, "Agenda").$$render($$result, {}, {}, {})}</div>
+
+<div id="${"inicio"}" class="${"modal is-active"}"><div class="${"modal-background"}"></div>
+    <div class="${"modal-content"}"><iframe title="${"streamline"}" style="${"width: 100%; height:50vh"}" src="${"https://player.vimeo.com/video/482797612"}" frameborder="${"0"}" allow="${"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"}" allowfullscreen></iframe></div>
+    <button class="${"modal-close is-large"}" aria-label="${"close"}"></button></div>`;
 });
 
 /* src\routes\salas\index.svelte generated by Svelte v3.23.0 */
 
-const css$9 = {
+const css$d = {
 	code: "iframe.svelte-1oqqxdk{width:100%;height:400px}",
 	map: "{\"version\":3,\"file\":\"index.svelte\",\"sources\":[\"index.svelte\"],\"sourcesContent\":[\"<style lang=\\\"scss\\\">iframe {\\n  width: 100%;\\n  height: 400px; }</style>\\r\\n\\r\\n<div id=\\\"lobby-salas\\\" class=\\\"hero is-fullheight is-relative0 is-clipped\\\">\\r\\n    <div class=\\\"hero-header has-padding-30\\\">\\r\\n        <div class=\\\"columns\\\">\\r\\n            <div class=\\\"column is-5\\\"><img src=\\\"logo-salas.svg\\\" alt=\\\"\\\"></div>\\r\\n            <div class=\\\"column is-3 is-offset-4\\\">\\r\\n                <a href=\\\"lobby\\\" class=\\\"button is-primary is-small is-outlined\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"user\\\"></i></span><span>Perfil</span></a>\\r\\n                <a href=\\\"lobby\\\" class=\\\"button is-primary is-small is-outlined\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"user\\\"></i></span><span>Agenda</span></a>\\r\\n                <a href=\\\"lobby\\\" class=\\\"button is-primary is-small is-outlined\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"user\\\"></i></span><span>Configuración</span></a>\\r\\n                <a href=\\\"lobby\\\" class=\\\"button is-primary is-small is-outlined\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"user\\\"></i></span><span>Ayuda</span></a>\\r\\n            </div>\\r\\n        </div>\\r\\n    </div>\\r\\n\\t<div class=\\\"hero-body\\\">\\r\\n        <div class=\\\"container\\\">\\r\\n            <div class=\\\"columns\\\">\\r\\n                <div class=\\\"column is-8\\\">\\r\\n                    <!-- Streamline Central -->\\r\\n                    <div class=\\\"iframe-container box\\\">\\r\\n                        <iframe title=\\\"\\\" src=\\\"https://www.youtube.com/embed/onaXveWIqhA\\\" frameborder=\\\"0\\\" allow=\\\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\\\" allowfullscreen></iframe>\\r\\n                    </div>\\r\\n                </div>\\r\\n                <div class=\\\"column is-4\\\">\\r\\n                    <!-- Caja de Preguntas -->\\r\\n                    <div class=\\\"questions box  has-background-primary\\\">\\r\\n                        <div class=\\\"title is-4 has-text-white\\\">Preguntas para el Panelísta</div>\\r\\n                        <!-- Componente de envío de eventos -->\\r\\n                    </div>\\r\\n                    <!-- Caja de Comentarios -->\\r\\n                    <div class=\\\"comments card\\\">\\r\\n                        <div class=\\\"card-content\\\"></div>\\r\\n                        <div class=\\\"card-footer\\\">\\r\\n                             <!-- Componente de envío de eventos -->\\r\\n                        </div>\\r\\n                    </div>\\r\\n                </div>\\r\\n            </div>\\r\\n        </div>\\r\\n    </div>\\r\\n    <div class=\\\"hero-footer\\\">\\r\\n        <img class=\\\"decoration\\\" src=\\\"decoration.svg\\\" alt=\\\"\\\">\\r\\n    </div>\\r\\n</div>\"],\"names\":[],\"mappings\":\"AAAmB,MAAM,eAAC,CAAC,AACzB,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,KAAK,AAAE,CAAC\"}"
 };
 
-const Salas = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
-	$$result.css.add(css$9);
+const Salas$1 = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+	$$result.css.add(css$d);
 
 	return `<div id="${"lobby-salas"}" class="${"hero is-fullheight is-relative0 is-clipped"}"><div class="${"hero-header has-padding-30"}"><div class="${"columns"}"><div class="${"column is-5"}"><img src="${"logo-salas.svg"}" alt="${""}"></div>
             <div class="${"column is-3 is-offset-4"}"><a href="${"lobby"}" class="${"button is-primary is-small is-outlined"}"><span class="${"icon is-small"}"><i data-feather="${"user"}"></i></span><span>Perfil</span></a>
@@ -923,28 +1212,14 @@ const Salas = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
     <div class="${"hero-footer"}"><img class="${"decoration"}" src="${"decoration.svg"}" alt="${""}"></div></div>`;
 });
 
-/* src\components\Messages.svelte generated by Svelte v3.23.0 */
-
-const Messages = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
-	return `<section class="${"notification message is-white"}"><small class="${"content is-small has-text-primary"}">Usuario equis</small><br>
-    <span>Esto es un mensaje de pruebas</span></section>`;
-});
-
-/* src\components\Input.svelte generated by Svelte v3.23.0 */
-
-const Input = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
-	return `<div class="${"box is-full-width is-rounded"}"><form action="${""}"><div class="${"columns"}"><div class="${"column is-10"}"><input type="${"text"}" class="${"input"}" value="${"Escribir"}"></div>
-            <div class="${"column is-2"}"><button class="${"button"}"><span class="${"icon is-small"}"><i data-feather="${"send"}"></i></span></button></div></div></form></div>`;
-});
-
 /* src\routes\salas\[slug].svelte generated by Svelte v3.23.0 */
 
-const css$a = {
-	code: "iframe.svelte-6vi9vj{width:100%;height:50vh}.has-background-gradient.svelte-6vi9vj{background:linear-gradient(71deg, #a100e0 0%, #520bd9 100%) !important}.card-content.svelte-6vi9vj{height:30vh}",
-	map: "{\"version\":3,\"file\":\"[slug].svelte\",\"sources\":[\"[slug].svelte\"],\"sourcesContent\":[\"<script context=\\\"module\\\">\\n\\timport Input from \\\"../../components/Input.svelte\\\"\\n\\timport Messages from \\\"../../components/Messages.svelte\\\"\\n    import Agenda from \\\"../../components/Agenda.svelte\\\"\\n\\n\\texport async function preload({\\n\\t\\tparams,\\n\\t\\tquery\\n\\t}) {\\n\\t\\t// the `slug` parameter is available because\\n\\t\\t// this file is called [slug].svelte\\n\\t\\tconst res = await this.fetch(`salas/${params.slug}.json`);\\n\\t\\tconst data = await res.json();\\n\\n\\t\\tif (res.status === 200) {\\n\\t\\t\\treturn {\\n\\t\\t\\t\\tsala: data\\n\\t\\t\\t};\\n\\t\\t} else {\\n\\t\\t\\tthis.error(res.status, data.message);\\n\\t\\t}\\n\\t}\\n</script>\\n\\n<style lang=\\\"scss\\\">iframe {\\n  width: 100%;\\n  height: 50vh; }\\n\\n.has-background-gradient {\\n  background: linear-gradient(71deg, #a100e0 0%, #520bd9 100%) !important; }\\n\\n.card-content {\\n  height: 30vh; }</style>\\n\\n<script>\\n\\texport let sala;\\n\\t    \\n    const abrirAgenda = () => {\\n        document.querySelector('#agenda-interactiva').classList.toggle('is-active')\\n    }\\n</script>\\n\\n<svelte:head>\\n\\t<title>{sala.title} - FIMPU</title>\\n</svelte:head>\\n\\n<section id=\\\"lobby-salas\\\" class=\\\"hero is-fullheight is-relative0 is-clipped\\\">\\n\\n\\t<Agenda/>\\n\\n    <div class=\\\"hero-header has-padding-30\\\">\\n        <div class=\\\"columns\\\">\\n            <div class=\\\"column is-5\\\"><img src=\\\"logo-salas.svg\\\" alt=\\\"\\\"></div>\\n            <div class=\\\"column is-3 is-offset-4\\\">\\n                <a href=\\\"lobby\\\" class=\\\"button is-primary is-small is-outlined\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"user\\\"></i></span><span>Perfil</span></a>\\n                <button on:click={abrirAgenda} class=\\\"button is-primary is-small is-outlined\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"user\\\"></i></span><span>Agenda</span></button>\\n                <a href=\\\"lobby\\\" class=\\\"button is-primary is-small is-outlined\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"user\\\"></i></span><span>Configuración</span></a>\\n                <a href=\\\"lobby\\\" class=\\\"button is-primary is-small is-outlined\\\"><span class=\\\"icon is-small\\\"><i data-feather=\\\"user\\\"></i></span><span>Ayuda</span></a>\\n            </div>\\n        </div>\\n    </div>\\n\\t<div class=\\\"hero-body\\\">\\n        <div class=\\\"container\\\">\\n            <div class=\\\"columns\\\">\\n                <div class=\\\"column is-8\\\">\\n                    <!-- Streamline Central -->\\n                    <div class=\\\"iframe-container box\\\">\\n                        <iframe title=\\\"\\\" src=\\\"{sala.iframe}\\\" frameborder=\\\"0\\\" allow=\\\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\\\" allowfullscreen></iframe>\\n                    </div>\\n                </div>\\n                <div class=\\\"column is-4\\\">\\n                    <!-- Caja de Preguntas -->\\n                    <div class=\\\"questions box  has-background-gradient\\\">\\n                        <div class=\\\"title is-4 has-text-white\\\">Preguntas para el Panelísta</div>\\n\\t\\t\\t\\t\\t\\t<!-- Componente de envío de eventos -->\\n\\t\\t\\t\\t\\t\\t<Input />\\n                    </div>\\n                    <!-- Caja de Comentarios -->\\n                    <div class=\\\"comments card\\\">\\n                        <div class=\\\"card-content has-background-primary-light\\\">\\n\\t\\t\\t\\t\\t\\t\\t<Messages />\\n\\t\\t\\t\\t\\t\\t</div>\\n                        <div class=\\\"card-footer has-background-gradient has-padding-20\\\">\\n\\t\\t\\t\\t\\t\\t\\t <!-- Componente de envío de eventos -->\\n\\t\\t\\t\\t\\t\\t\\t\\t<Input />\\n                        </div>\\n                    </div>\\n                </div>\\n            </div>\\n        </div>\\n    </div>\\n    <div class=\\\"hero-footer\\\">\\n        <img class=\\\"decoration\\\" src=\\\"decoration.svg\\\" alt=\\\"\\\">\\n    </div>\\n</section>\"],\"names\":[],\"mappings\":\"AAwBmB,MAAM,cAAC,CAAC,AACzB,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,IAAI,AAAE,CAAC,AAEjB,wBAAwB,cAAC,CAAC,AACxB,UAAU,CAAE,gBAAgB,KAAK,CAAC,CAAC,OAAO,CAAC,EAAE,CAAC,CAAC,OAAO,CAAC,IAAI,CAAC,CAAC,UAAU,AAAE,CAAC,AAE5E,aAAa,cAAC,CAAC,AACb,MAAM,CAAE,IAAI,AAAE,CAAC\"}"
+const css$e = {
+	code: ".has-background-gradient.svelte-1bied6k{background:linear-gradient(71deg, #a100e0 0%, #520bd9 100%) !important}",
+	map: "{\"version\":3,\"file\":\"[slug].svelte\",\"sources\":[\"[slug].svelte\"],\"sourcesContent\":[\"<script context=\\\"module\\\">\\n    import Input from \\\"../../components/Input.svelte\\\"\\n    import Messages from \\\"../../components/Messages.svelte\\\"\\n    import Agenda from \\\"../../components/Agenda.svelte\\\"\\n    import Iframe from \\\"../../components/Iframe.svelte\\\"\\n    \\n    import Encuestas from \\\"../../components/Encuestas.svelte\\\"\\n    import Trivias from \\\"../../components/Trivias.svelte\\\"\\n    import RoomChange from \\\"../../components/RoomChange.svelte\\\"\\n\\n    export async function preload({\\n        params,\\n        query\\n    }) {\\n        // the `slug` parameter is available because\\n        // this file is called [slug].svelte\\n        const res = await this.fetch(`salas/${params.slug}.json`);\\n        const data = await res.json();\\n\\n        if (res.status === 200) {\\n            return {\\n                sala: data\\n            };\\n        } else {\\n            this.error(res.status, data.message);\\n        }\\n    }\\n</script>\\n<script>\\n    /**\\n     * Inner stuff\\n     */\\n\\n    export let sala\\n\\n    const abrirAgenda = () => {\\n        document.querySelector('#agenda-interactiva').classList.toggle('is-active')\\n    }\\n</script>\\n<style lang=\\\"scss\\\">.has-background-gradient {\\n  background: linear-gradient(71deg, #a100e0 0%, #520bd9 100%) !important; }</style>\\n\\n<svelte:head>\\n    <title>{sala.title} - FIMPU</title>\\n</svelte:head>\\n\\n<section id=\\\"lobby-salas\\\" class=\\\"hero is-fullheight is-relative is-clipped\\\">\\n\\n    <Agenda />\\n    <RoomChange room={sala.slug}  admin={false}/>\\n    <div class=\\\"hero-header has-padding-30\\\">\\n        <div class=\\\"columns\\\">\\n            <div class=\\\"column is-5\\\"><a href=\\\"/\\\"><img class=\\\"logo\\\" src=\\\"logo-salas.svg\\\" alt=\\\"\\\"></a></div>\\n            <div class=\\\"column is-3 is-offset-4\\\">\\n                <a href=\\\"lobby\\\" class=\\\"button is-primary is-small is-outlined\\\"><span class=\\\"icon is-small\\\"><i\\n                            data-feather=\\\"user\\\"></i></span><span>Perfil</span></a>\\n                <button on:click={abrirAgenda} class=\\\"button is-primary is-small is-outlined\\\"><span\\n                        class=\\\"icon is-small\\\"><i data-feather=\\\"user\\\"></i></span><span>Agenda</span></button>\\n                <a href=\\\"lobby\\\" class=\\\"button is-primary is-small is-outlined\\\"><span class=\\\"icon is-small\\\"><i\\n                            data-feather=\\\"user\\\"></i></span><span>Configuración</span></a>\\n                <a href=\\\"lobby\\\" class=\\\"button is-primary is-small is-outlined\\\"><span class=\\\"icon is-small\\\"><i\\n                            data-feather=\\\"user\\\"></i></span><span>Ayuda</span></a>\\n            </div>\\n        </div>\\n    </div>\\n    <div class=\\\"hero-body\\\">\\n        <div class=\\\"container\\\">\\n            <div class=\\\"columns\\\">\\n                <div class=\\\"column is-8\\\">\\n                    <!-- Streamline Central -->\\n                    <div class=\\\"iframe-container box\\\">\\n                        <Iframe {sala}/>\\n                    </div>\\n                    <Trivias room={sala.slug} admin={false}/>\\n                    <Encuestas room={sala.slug} admin={false}/>\\n                </div>\\n                <div class=\\\"column is-4\\\">\\n                    <!-- Caja de Preguntas -->\\n                    <div class=\\\"questions box  has-background-gradient\\\">\\n                        <div class=\\\"title is-4 has-text-white\\\">Preguntas para el Panelísta</div>\\n                        <!-- Componente de envío de eventos -->\\n                        <Input  room={sala.slug} event={'question'} />\\n                    </div>\\n                    <!-- Caja de Comentarios -->\\n                    <div class=\\\"comments card\\\">\\n                        <Messages room={sala.slug} event={'message-approved'} />\\n                        <div class=\\\"card-footer has-background-gradient has-padding-20\\\">\\n                            <!-- Componente de envío de eventos -->\\n                            <Input room={sala.slug} event={'message'} />\\n                        </div>\\n                    </div>\\n                </div>\\n            </div>\\n        </div>\\n    </div>\\n    <div class=\\\"hero-footer\\\">\\n        <img class=\\\"decoration\\\" src=\\\"decoration.svg\\\" alt=\\\"\\\">\\n    </div>\\n</section>\"],\"names\":[],\"mappings\":\"AAuCmB,wBAAwB,eAAC,CAAC,AAC3C,UAAU,CAAE,gBAAgB,KAAK,CAAC,CAAC,OAAO,CAAC,EAAE,CAAC,CAAC,OAAO,CAAC,IAAI,CAAC,CAAC,UAAU,AAAE,CAAC\"}"
 };
 
-async function preload$1({ params, query }) {
+async function preload$2({ params, query }) {
 	// the `slug` parameter is available because
 	// this file is called [slug].svelte
 	const res = await this.fetch(`salas/${params.slug}.json`);
@@ -958,91 +1233,42 @@ async function preload$1({ params, query }) {
 	}
 }
 
-const U5Bslugu5D$1 = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
+const U5Bslugu5D$3 = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
 	let { sala } = $$props;
 
 	if ($$props.sala === void 0 && $$bindings.sala && sala !== void 0) $$bindings.sala(sala);
-	$$result.css.add(css$a);
+	$$result.css.add(css$e);
 
 	return `${($$result.head += `${($$result.title = `<title>${escape(sala.title)} - FIMPU</title>`, "")}`, "")}
 
-<section id="${"lobby-salas"}" class="${"hero is-fullheight is-relative0 is-clipped"}">${validate_component(Agenda, "Agenda").$$render($$result, {}, {}, {})}
-
-    <div class="${"hero-header has-padding-30"}"><div class="${"columns"}"><div class="${"column is-5"}"><img src="${"logo-salas.svg"}" alt="${""}"></div>
+<section id="${"lobby-salas"}" class="${"hero is-fullheight is-relative is-clipped"}">${validate_component(Agenda$1, "Agenda").$$render($$result, {}, {}, {})}
+    ${validate_component(RoomChange, "RoomChange").$$render($$result, { room: sala.slug, admin: false }, {}, {})}
+    <div class="${"hero-header has-padding-30"}"><div class="${"columns"}"><div class="${"column is-5"}"><a href="${"/"}"><img class="${"logo"}" src="${"logo-salas.svg"}" alt="${""}"></a></div>
             <div class="${"column is-3 is-offset-4"}"><a href="${"lobby"}" class="${"button is-primary is-small is-outlined"}"><span class="${"icon is-small"}"><i data-feather="${"user"}"></i></span><span>Perfil</span></a>
                 <button class="${"button is-primary is-small is-outlined"}"><span class="${"icon is-small"}"><i data-feather="${"user"}"></i></span><span>Agenda</span></button>
                 <a href="${"lobby"}" class="${"button is-primary is-small is-outlined"}"><span class="${"icon is-small"}"><i data-feather="${"user"}"></i></span><span>Configuración</span></a>
                 <a href="${"lobby"}" class="${"button is-primary is-small is-outlined"}"><span class="${"icon is-small"}"><i data-feather="${"user"}"></i></span><span>Ayuda</span></a></div></div></div>
-	<div class="${"hero-body"}"><div class="${"container"}"><div class="${"columns"}"><div class="${"column is-8"}">
-                    <div class="${"iframe-container box"}"><iframe title="${""}"${add_attribute("src", sala.iframe, 0)} frameborder="${"0"}" allow="${"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"}" allowfullscreen class="${"svelte-6vi9vj"}"></iframe></div></div>
+    <div class="${"hero-body"}"><div class="${"container"}"><div class="${"columns"}"><div class="${"column is-8"}">
+                    <div class="${"iframe-container box"}">${validate_component(Iframe, "Iframe").$$render($$result, { sala }, {}, {})}</div>
+                    ${validate_component(Trivias, "Trivias").$$render($$result, { room: sala.slug, admin: false }, {}, {})}
+                    ${validate_component(Encuestas, "Encuestas").$$render($$result, { room: sala.slug, admin: false }, {}, {})}</div>
                 <div class="${"column is-4"}">
-                    <div class="${"questions box  has-background-gradient svelte-6vi9vj"}"><div class="${"title is-4 has-text-white"}">Preguntas para el Panelísta</div>
-						
-						${validate_component(Input, "Input").$$render($$result, {}, {}, {})}</div>
+                    <div class="${"questions box  has-background-gradient svelte-1bied6k"}"><div class="${"title is-4 has-text-white"}">Preguntas para el Panelísta</div>
+                        
+                        ${validate_component(Input, "Input").$$render($$result, { room: sala.slug, event: "question" }, {}, {})}</div>
                     
-                    <div class="${"comments card"}"><div class="${"card-content has-background-primary-light svelte-6vi9vj"}">${validate_component(Messages, "Messages").$$render($$result, {}, {}, {})}</div>
-                        <div class="${"card-footer has-background-gradient has-padding-20 svelte-6vi9vj"}">
-								${validate_component(Input, "Input").$$render($$result, {}, {}, {})}</div></div></div></div></div></div>
+                    <div class="${"comments card"}">${validate_component(Messages, "Messages").$$render(
+		$$result,
+		{
+			room: sala.slug,
+			event: "message-approved"
+		},
+		{},
+		{}
+	)}
+                        <div class="${"card-footer has-background-gradient has-padding-20 svelte-1bied6k"}">
+                            ${validate_component(Input, "Input").$$render($$result, { room: sala.slug, event: "message" }, {}, {})}</div></div></div></div></div></div>
     <div class="${"hero-footer"}"><img class="${"decoration"}" src="${"decoration.svg"}" alt="${""}"></div></section>`;
-});
-
-/* src\routes\blog\index.svelte generated by Svelte v3.23.0 */
-
-const css$b = {
-	code: "ul.svelte-dfcnm7{margin:0 0 1em 0;line-height:1.5}",
-	map: "{\"version\":3,\"file\":\"index.svelte\",\"sources\":[\"index.svelte\"],\"sourcesContent\":[\"<script context=\\\"module\\\">\\n\\texport function preload({ params, query }) {\\n\\t\\treturn this.fetch(`blog.json`).then(r => r.json()).then(posts => {\\n\\t\\t\\treturn { posts };\\n\\t\\t});\\n\\t}\\n</script>\\n\\n<script>\\n\\texport let posts;\\n</script>\\n\\n<style>\\n\\tul {\\n\\t\\tmargin: 0 0 1em 0;\\n\\t\\tline-height: 1.5;\\n\\t}</style>\\n\\n<svelte:head>\\n\\t<title>Blog</title>\\n</svelte:head>\\n\\n<section class=\\\"section\\\">\\n\\t\\n\\t<h1 class=\\\"is-size-3 mb-4\\\">Recent posts</h1>\\n\\t\\n\\t<ul class=\\\"ml-3\\\">\\n\\t\\t{#each posts as post}\\n\\t\\t<!-- we're using the non-standard `rel=prefetch` attribute to\\n\\t\\t\\ttell Sapper to load the data for the page as soon as\\n\\t\\t\\tthe user hovers over the link or taps it, instead of\\n\\t\\t\\twaiting for the 'click' event -->\\n\\t\\t\\t<li><a rel='prefetch' href='blog/{post.slug}'>{post.title}</a></li>\\n\\t\\t\\t{/each}\\n\\t\\t</ul>\\n</section>\"],\"names\":[],\"mappings\":\"AAaC,EAAE,cAAC,CAAC,AACH,MAAM,CAAE,CAAC,CAAC,CAAC,CAAC,GAAG,CAAC,CAAC,CACjB,WAAW,CAAE,GAAG,AACjB,CAAC\"}"
-};
-
-function preload$2({ params, query }) {
-	return this.fetch(`blog.json`).then(r => r.json()).then(posts => {
-		return { posts };
-	});
-}
-
-const Blog = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
-	let { posts } = $$props;
-	if ($$props.posts === void 0 && $$bindings.posts && posts !== void 0) $$bindings.posts(posts);
-	$$result.css.add(css$b);
-
-	return `${($$result.head += `${($$result.title = `<title>Blog</title>`, "")}`, "")}
-
-<section class="${"section"}"><h1 class="${"is-size-3 mb-4"}">Recent posts</h1>
-	
-	<ul class="${"ml-3 svelte-dfcnm7"}">${each(posts, post => `
-			<li><a rel="${"prefetch"}" href="${"blog/" + escape(post.slug)}">${escape(post.title)}</a></li>`)}</ul></section>`;
-});
-
-/* src\routes\blog\[slug].svelte generated by Svelte v3.23.0 */
-
-const css$c = {
-	code: ".content.svelte-1uee4fl h2{font-size:1.4em;font-weight:500}.content.svelte-1uee4fl pre{background-color:#f9f9f9;box-shadow:inset 1px 1px 5px rgba(0,0,0,0.05);padding:0.5em;border-radius:2px;overflow-x:auto}.content.svelte-1uee4fl pre code{background-color:transparent;padding:0}.content.svelte-1uee4fl ul{line-height:1.5}.content.svelte-1uee4fl li{margin:0 0 0.5em 0}",
-	map: "{\"version\":3,\"file\":\"[slug].svelte\",\"sources\":[\"[slug].svelte\"],\"sourcesContent\":[\"<script context=\\\"module\\\">\\n\\texport async function preload({ params, query }) {\\n\\t\\t// the `slug` parameter is available because\\n\\t\\t// this file is called [slug].svelte\\n\\t\\tconst res = await this.fetch(`blog/${params.slug}.json`);\\n\\t\\tconst data = await res.json();\\n\\n\\t\\tif (res.status === 200) {\\n\\t\\t\\treturn { post: data };\\n\\t\\t} else {\\n\\t\\t\\tthis.error(res.status, data.message);\\n\\t\\t}\\n\\t}\\n</script>\\n\\n<script>\\n\\texport let post;\\n</script>\\n\\n<style>\\n\\t/*\\n\\t\\tBy default, CSS is locally scoped to the component,\\n\\t\\tand any unused styles are dead-code-eliminated.\\n\\t\\tIn this page, Svelte can't know which elements are\\n\\t\\tgoing to appear inside the {{{post.html}}} block,\\n\\t\\tso we have to use the :global(...) modifier to target\\n\\t\\tall elements inside .content\\n\\t*/\\n\\t.content :global(h2) {\\n\\t\\tfont-size: 1.4em;\\n\\t\\tfont-weight: 500;\\n\\t}\\n\\n\\t.content :global(pre) {\\n\\t\\tbackground-color: #f9f9f9;\\n\\t\\tbox-shadow: inset 1px 1px 5px rgba(0,0,0,0.05);\\n\\t\\tpadding: 0.5em;\\n\\t\\tborder-radius: 2px;\\n\\t\\toverflow-x: auto;\\n\\t}\\n\\n\\t.content :global(pre) :global(code) {\\n\\t\\tbackground-color: transparent;\\n\\t\\tpadding: 0;\\n\\t}\\n\\n\\t.content :global(ul) {\\n\\t\\tline-height: 1.5;\\n\\t}\\n\\n\\t.content :global(li) {\\n\\t\\tmargin: 0 0 0.5em 0;\\n\\t}</style>\\n\\n<svelte:head>\\n\\t<title>{post.title}</title>\\n</svelte:head>\\n\\n<h1>{post.title}</h1>\\n\\n<div class='content'>\\n\\t{@html post.html}\\n</div>\\n\"],\"names\":[],\"mappings\":\"AA4BC,uBAAQ,CAAC,AAAQ,EAAE,AAAE,CAAC,AACrB,SAAS,CAAE,KAAK,CAChB,WAAW,CAAE,GAAG,AACjB,CAAC,AAED,uBAAQ,CAAC,AAAQ,GAAG,AAAE,CAAC,AACtB,gBAAgB,CAAE,OAAO,CACzB,UAAU,CAAE,KAAK,CAAC,GAAG,CAAC,GAAG,CAAC,GAAG,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,IAAI,CAAC,CAC9C,OAAO,CAAE,KAAK,CACd,aAAa,CAAE,GAAG,CAClB,UAAU,CAAE,IAAI,AACjB,CAAC,AAED,uBAAQ,CAAC,AAAQ,GAAG,AAAC,CAAC,AAAQ,IAAI,AAAE,CAAC,AACpC,gBAAgB,CAAE,WAAW,CAC7B,OAAO,CAAE,CAAC,AACX,CAAC,AAED,uBAAQ,CAAC,AAAQ,EAAE,AAAE,CAAC,AACrB,WAAW,CAAE,GAAG,AACjB,CAAC,AAED,uBAAQ,CAAC,AAAQ,EAAE,AAAE,CAAC,AACrB,MAAM,CAAE,CAAC,CAAC,CAAC,CAAC,KAAK,CAAC,CAAC,AACpB,CAAC\"}"
-};
-
-async function preload$3({ params, query }) {
-	// the `slug` parameter is available because
-	// this file is called [slug].svelte
-	const res = await this.fetch(`blog/${params.slug}.json`);
-
-	const data = await res.json();
-
-	if (res.status === 200) {
-		return { post: data };
-	} else {
-		this.error(res.status, data.message);
-	}
-}
-
-const U5Bslugu5D$2 = create_ssr_component(($$result, $$props, $$bindings, $$slots) => {
-	let { post } = $$props;
-	if ($$props.post === void 0 && $$bindings.post && post !== void 0) $$bindings.post(post);
-	$$result.css.add(css$c);
-
-	return `${($$result.head += `${($$result.title = `<title>${escape(post.title)}</title>`, "")}`, "")}
-
-<h1>${escape(post.title)}</h1>
-
-<div class="${"content svelte-1uee4fl"}">${post.html}</div>`;
 });
 
 // This file is generated by Sapper — do not edit it!
@@ -1062,20 +1288,6 @@ const manifest = {
 			// salas/[slug].json.js
 			pattern: /^\/salas\/([^\/]+?)\.json$/,
 			handlers: route_1,
-			params: match => ({ slug: d(match[1]) })
-		},
-
-		{
-			// blog/index.json.js
-			pattern: /^\/blog\.json$/,
-			handlers: route_2,
-			params: () => ({})
-		},
-
-		{
-			// blog/[slug].json.js
-			pattern: /^\/blog\/([^\/]+?)\.json$/,
-			handlers: route_3,
 			params: match => ({ slug: d(match[1]) })
 		}
 	],
@@ -1115,6 +1327,61 @@ const manifest = {
 		},
 
 		{
+			// admin/index.svelte
+			pattern: /^\/admin\/?$/,
+			parts: [
+				{ name: "admin", file: "admin/index.svelte", component: Admin$1 }
+			]
+		},
+
+		{
+			// admin/agenda/index.svelte
+			pattern: /^\/admin\/agenda\/?$/,
+			parts: [
+				null,
+				{ name: "admin_agenda", file: "admin/agenda/index.svelte", component: Agenda }
+			]
+		},
+
+		{
+			// admin/medios/index.svelte
+			pattern: /^\/admin\/medios\/?$/,
+			parts: [
+				null,
+				{ name: "admin_medios", file: "admin/medios/index.svelte", component: Medios$1 }
+			]
+		},
+
+		{
+			// admin/medios/[slug].svelte
+			pattern: /^\/admin\/medios\/([^\/]+?)\/?$/,
+			parts: [
+				null,
+				null,
+				{ name: "admin_medios_$slug", file: "admin/medios/[slug].svelte", component: U5Bslugu5D$1, params: match => ({ slug: d(match[1]) }) }
+			]
+		},
+
+		{
+			// admin/salas/index.svelte
+			pattern: /^\/admin\/salas\/?$/,
+			parts: [
+				null,
+				{ name: "admin_salas", file: "admin/salas/index.svelte", component: Salas }
+			]
+		},
+
+		{
+			// admin/salas/[slug].svelte
+			pattern: /^\/admin\/salas\/([^\/]+?)\/?$/,
+			parts: [
+				null,
+				null,
+				{ name: "admin_salas_$slug", file: "admin/salas/[slug].svelte", component: U5Bslugu5D$2, preload: preload$1, params: match => ({ slug: d(match[1]) }) }
+			]
+		},
+
+		{
 			// lobby.svelte
 			pattern: /^\/lobby\/?$/,
 			parts: [
@@ -1126,7 +1393,7 @@ const manifest = {
 			// salas/index.svelte
 			pattern: /^\/salas\/?$/,
 			parts: [
-				{ name: "salas", file: "salas/index.svelte", component: Salas }
+				{ name: "salas", file: "salas/index.svelte", component: Salas$1 }
 			]
 		},
 
@@ -1135,24 +1402,7 @@ const manifest = {
 			pattern: /^\/salas\/([^\/]+?)\/?$/,
 			parts: [
 				null,
-				{ name: "salas_$slug", file: "salas/[slug].svelte", component: U5Bslugu5D$1, preload: preload$1, params: match => ({ slug: d(match[1]) }) }
-			]
-		},
-
-		{
-			// blog/index.svelte
-			pattern: /^\/blog\/?$/,
-			parts: [
-				{ name: "blog", file: "blog/index.svelte", component: Blog, preload: preload$2 }
-			]
-		},
-
-		{
-			// blog/[slug].svelte
-			pattern: /^\/blog\/([^\/]+?)\/?$/,
-			parts: [
-				null,
-				{ name: "blog_$slug", file: "blog/[slug].svelte", component: U5Bslugu5D$2, preload: preload$3, params: match => ({ slug: d(match[1]) }) }
+				{ name: "salas_$slug", file: "salas/[slug].svelte", component: U5Bslugu5D$3, preload: preload$2, params: match => ({ slug: d(match[1]) }) }
 			]
 		}
 	],
@@ -3870,21 +4120,77 @@ function noop$1(){}
 const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === 'development';
 
-const { server } = express() // You can also use Express
-.use(
-	compression({ threshold: 0 }),
-	sirv('static', { dev }),
-	middleware()
+const { server } = polka() // You can also use Express
+	.use(
+		compression({ threshold: 0 }),
+		sirv('static', { dev }),
+		middleware()
 	)
 	.listen(PORT, err => {
-		
 		if (err) console.log('error', err);
 	});
 	
-	const io = require('socket.io')(server);
+	const io$1 = require('socket.io')(server);
 
-	io.on('connection', (socket) => {
-		socket.on('Message', function(msg){
-			io.emit("Message", msg);
+
+	/**
+	 * Determinamos una suerte de Estado que irá recolectando información pertinente
+	 */
+
+	const state = {
+		users:{}, 
+		polls:{}, 
+		quizes:{}
+	}; 
+
+	io$1.on('connection', (socket) => {
+		/** 
+		 * Eventos de Mensajes 
+		 * */
+
+		socket.on('message', (res) => {
+			socket.broadcast.emit('message', res);
+		});
+
+		socket.on('message-approved', (res) => {
+			socket.broadcast.emit('message-approved', res);
+		});
+
+		/** 
+		 * Evento de Preguntas 
+		 * */
+		socket.on('question', (res) => {
+			socket.broadcast.emit('question', res);
+		});
+
+		/**
+		 *  Evento de Streamline 
+		 * */
+		socket.on('streamline', (res) => {
+			socket.broadcast.emit('streamline', res);
+		});
+
+		/**
+		 *  Evento de Opciones de Cambio de Sala
+		 * */
+		socket.on('room-change', (res) => {
+			socket.broadcast.emit('room-change', res);
+		});
+
+		/**
+		 *  Evento de Opciones de Encuesta
+		 * */
+		socket.on('poll', (res) => {
+			state.polls[res.title] = res;
+			socket.broadcast.emit('poll-running', state.polls[res.title]);
+		});
+		socket.on('poll-vote', (res) => {
+			state.polls[res.title].data[res.index]++; 
+			socket.emit('poll-update-chart', state.polls[res.title]);
+			socket.broadcast.emit('poll-update-chart', state.polls[res.title]);
+		});
+		socket.on('stop-poll', (room) => {
+			socket.emit('stop-poll', room);
+			socket.broadcast.emit('stop-poll', room);
 		});
 	});

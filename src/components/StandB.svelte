@@ -28,10 +28,9 @@
     }
 
     .controls .button {
-        background: white;
         font-weight: bold;
 
-        &.is-primary.is-outlined {
+        &.is-primary{
             position: absolute;
             font-size: 1.8vh;
 
@@ -56,7 +55,7 @@
 <div class="controls">
     <!-- Video -- Conócenos -->
     <div class="iframe-container">
-        <button class="button is-rounded is-primary is-outlined is-uppercase has-iframe">Conócenos</button>
+        <a href="{stand.website}" target="_blank" class="button is-rounded is-primary is-uppercase has-iframe">Conócenos</a>
         <iframe title="{stand.title}" src="{stand.iframe}" frameborder="0" allow="autoplay; fullscreen"
             allowfullscreen></iframe>
     </div>
@@ -64,14 +63,14 @@
     <!-- Galería -->
 
     <div class="gallery-trigger">
-        <button on:click={openGallery} class="button is-rounded is-primary is-outlined is-uppercase has-gallery">Galería</button>
+        <button on:click={openGallery} class="button is-rounded is-primary is-uppercase has-gallery">Galería</button>
     </div>
     <SlideShow {images}/>
 
     <!-- PDF -- Sobre Nosotros -->
     {#if stand.pdf}
     <div class="pdf-trigger">
-        <a target="_blank" href={stand.pdf} class="button is-rounded is-primary is-outlined is-uppercase has-pdf">Sobre Nosotros</a>
+        <a target="_blank" href={stand.pdf} class="button is-rounded is-primary is-uppercase has-pdf">Sobre Nosotros</a>
     </div>
     {/if}
 </div>

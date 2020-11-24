@@ -28,13 +28,9 @@
     }
 
     .controls .button {
-        background: white;
         font-weight: bold;
 
-        &.is-primary.is-outlined {
-            &:hover,:active {
-                background: #500ADA;
-            }
+        &.is-primary {
             position: absolute;
             font-size: 1.8vh;
 
@@ -65,7 +61,7 @@
     <!-- Video -- Conócenos -->
     {#if stand.iframe}
     <div class="iframe-container">
-        <button class="button is-rounded is-primary is-outlined is-uppercase has-iframe">Conócenos</button>
+        <a href="{stand.website}" target="_blank" class="button is-rounded is-primary is-uppercase has-iframe">Conócenos</a>
         <iframe title="{stand.title}" src="{stand.iframe}" frameborder="0" allow="autoplay; fullscreen"
             allowfullscreen></iframe> 
     </div>
@@ -73,20 +69,20 @@
     <!-- Galería -->
     {#if stand.gallery}
     <div class="gallery-trigger">
-        <button on:click={openGallery} class="button is-primary is-outlined is-uppercase has-gallery"><i data-feather="image"></i></button>
+        <button on:click={openGallery} class="button is-primary is-uppercase has-gallery"><i data-feather="image"></i></button>
     </div>
     <SlideShow {images}/>
     {/if}
     <!-- PDF -- Sobre Nosotros -->
     {#if stand.pdf}
     <div class="pdf-trigger">
-        <a target="_blank" href={stand.pdf} class="button is-rounded is-primary is-outlined is-uppercase has-pdf">Sobre Nosotros</a>
+        <a target="_blank" href={stand.pdf} class="button is-rounded is-primary is-uppercase has-pdf">Sobre Nosotros</a>
     </div>
     {/if}
     <!-- PDF -- Chat Modal -->
     {#if stand.pdf}
     <div class="chat-trigger">
-        <a target="_blank" href={stand.pdf} class="button is-rounded is-primary is-outlined is-uppercase has-chat">Punto de Contácto</a>
+        <a target="_blank" href={stand.pdf} class="button is-rounded is-primary is-uppercase has-chat">Punto de Contácto</a>
     </div>
     {/if}
     

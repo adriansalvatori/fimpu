@@ -1,5 +1,6 @@
 <script context="module">
 
+	import Admin from "../../components/Admin.svelte"
 	import StandA from '../../components/StandA.svelte'
 	import StandB from '../../components/StandB.svelte'
 
@@ -53,6 +54,7 @@
 	<title>{stand.title} - FIMPU</title>
 </svelte:head>
 
+<Admin/>
 <section id="stand" class="hero is-fullheight" style="background:url({stand.background})">
 	<div class="hero-body">
 		{#if stand.type === 'a'}
