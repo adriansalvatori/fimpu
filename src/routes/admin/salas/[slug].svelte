@@ -75,20 +75,26 @@
         <div class="container">
             <h2 class="title is-2">Espacio de Administración para {sala.title}</h2>
             <div class="columns">
-                <div class="column is-3"><RoomChange room={sala.slug} admin={true}/></div>
-                <div class="column is-3"><Trivias room={sala.slug} admin={true}/></div>
-                <div class="column is-3"><Encuestas room={sala.slug} admin={true}/></div>
-            </div>
-            <div class="columns">
                 <div class="column is-4">
                     <!-- Streamline Central -->
+                    <h6 class="title is-6">Streamline de la sala</h6>
                     <div class="iframe-container box">
-                        <Input room={sala.slug} event={'streamline'} />
+                        <Input placeholder="Streamline Original" room={sala.slug} event={'streamline'} />
+                        <br>
+                        <Input placeholder="Streamline Traducido" room={sala.slug} event={'streamline-traducido'} />
+                        <br><br>
                         <Iframe {sala}/>
                     </div>
+
+                    <h6 class="title is-6">Enviar usuarios a Otras Salas</h6>
+                    <RoomChange room={sala.slug} admin={true}/>
+                    <br><br>
+                    <h6 class="title is-6">Enviar encuesta a Usuarios</h6>
+                    <Encuestas room={sala.slug} admin={true}/>
                 </div>
                 <div class="column is-4">
                      <!-- Caja de Preguntas -->
+                     <h6 class="title is-6">Preguntas de la sala</h6>
                      <div class="comments card">
                         <Messages room={sala.slug} event={'question'} />
                         <div class="card-footer has-background-gradient has-padding-20">
@@ -99,6 +105,7 @@
                 </div>
                 <div class="column is-4">
                     <!-- Caja de Comentarios -->
+                    <h6 class="title is-6">Comentarios de la sala</h6>
                     <div class="comments card">
                         <Messages approval={true} room={sala.slug} event={'message'} />
                         <div class="card-footer has-background-gradient has-padding-20">

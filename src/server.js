@@ -30,15 +30,32 @@ const { server } = polka() // You can also use Express
 		quizes:{}
 	} 
 
+	
+
 	io.on('connection', (socket) => {
+
+		/** Eventos de medición del usuario */
+
+		socket.on('new-user', user => {
+			state.users[socket.id] = user
+			socket.broadcast.emit('user-connected', user)
+			console.log(state.users)
+		})
+
+		socket.on('disconnect', () => {
+			socket.broadcast.emit('user-disconnected', state.users[socket.id])
+			delete state.users[socket.id]
+			console.log(state.users)
+		})
 
 
 		/**
 		 * Evento de Ayuda
 		 */
 
-		socket.on('ayuda', (res) => {
-			socket.broadcast.emit('ayuda', res)
+		socket.on('ayuda', (user) => {
+			socket.broadcast.emit('ayuda', user)
+			console.log(state.users[socket.id])
 		})
 
 		/** 
@@ -67,6 +84,10 @@ const { server } = polka() // You can also use Express
 			socket.broadcast.emit('streamline', res)
 		})
 
+		socket.on('streamline-traducido', (res) => {
+			socket.broadcast.emit('streamline-traducido', res)
+		})
+
 		/**
 		 *  Evento de Opciones de Cambio de Sala
 		 * */
@@ -80,6 +101,7 @@ const { server } = polka() // You can also use Express
 		socket.on('poll', (res) => {
 			state.polls[res.title] = res
 			socket.broadcast.emit('poll-running', state.polls[res.title])
+			console.log(res)
 		})
 		socket.on('poll-vote', (res) => {
 			state.polls[res.title].data[res.index]++ 

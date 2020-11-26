@@ -29,7 +29,8 @@
     "sirv": "^0.4.0",
     "socket.io": "^3.0.3",
     "socket.io-client": "^3.0.3",
-    "tiny-slider": "^2.9.3"
+    "tiny-slider": "^2.9.3",
+    "tiny-timer": "^1.5.1"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",

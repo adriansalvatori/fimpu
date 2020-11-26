@@ -13,13 +13,13 @@ socket.on(event, (res) => {
     }
 })
 
-const approveComment = (message, index) => {
-    socket.emit('message-approved', {message:message, room:room})
+const approveComment = (message, index, user) => {
+    socket.emit('message-approved', {message:message, room:room, user:user})
     removeItem(index)
     console.log('Done')
 }
 
-const declineComment = (message, index) => {
+const declineComment = (index) => {
     removeItem(index)
     console.log('Done')
 }
@@ -60,8 +60,8 @@ const updateComponent = () => {
                 </div>
                 { #if ( approval===true )}
                 <div class="column is-3">
-                    <button on:click={() => {approveComment(message, index)}} class="button is-primary">Aprobar</button>
-                    <button on:click={() => {declineComment(message, index)}} class="button is-danger is-outlined">Eliminar</button>
+                    <button on:click={() => {approveComment(message.message, index, message.user)}} class="button is-small is-primary">Aprobar</button>
+                    <button on:click={() => {declineComment(index)}} class="button is-small is-danger is-outlined">Eliminar</button>
                 </div>
                 {/if}
             </div>

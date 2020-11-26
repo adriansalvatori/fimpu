@@ -1706,6 +1706,11 @@ etag@~1.8.1:
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
 
+events@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/events/-/events-3.2.0.tgz#93b87c18f8efcd4202a461aec4dfc0556b639379"
+  integrity sha512-/46HWwbfCX2xTawVfkKLGxMifJYQBWMwY1mjywRtb4c9x8l5NP3KoJtnIOiL1hfdRkIuYhETxQlo62IF8tcnlg==
+
 express@^4.17.1:
   version "4.17.1"
   resolved "https://registry.yarnpkg.com/express/-/express-4.17.1.tgz#4491fc38605cf51f8629d39c2b5d026f98a4c134"
@@ -3554,6 +3559,13 @@ tiny-slider@^2.9.3:
   version "2.9.3"
   resolved "https://registry.yarnpkg.com/tiny-slider/-/tiny-slider-2.9.3.tgz#94d8158f704f3192fef1634c0ae6779fb14ea04e"
   integrity sha512-KZY45m+t3fb3Kwlqsic0PIos1lgTNXBEC5N/AhI3aNEcryrd0nXohZMbVPMkcNYdbLjY1IUJAXWYAO6/RGJnKw==
+
+tiny-timer@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/tiny-timer/-/tiny-timer-1.5.1.tgz#74d13d07b3fb216867be1013ca666bfeece19790"
+  integrity sha512-ywW06n0cPSiCIdQTDCBMmdK2Jw1Io8f8n6OJQyNv6GpOoLJjJdWCRWwIaedukc7B+oPPEBd8qmq+175tnl7TWA==
+  dependencies:
+    events "^3.2.0"
 
 to-fast-properties@^2.0.0:
   version "2.0.0"

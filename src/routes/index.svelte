@@ -13,37 +13,6 @@
 </style>
 
 <script>
-
-	var timerRev = '';
-	var end = new Date('Noviembre 26, 2020 07:00:00');
-
-	var _second = 1000;
-	var _minute = _second * 60;
-	var _hour = _minute * 60;
-	var _day = _hour * 24;
-	var timer;
-
-	function showRemaning() {
-		var now = new Date();
-		var distance = end - now;
-
-		if (distance < 0) {
-				clearInterval(timer);
-		} else {
-			var days = Math.floor(distance / _day);
-			var hours = Math.floor((distance % _day) / _hour);
-			var minutes = Math.floor((distance % _hour) / _minute);
-			var seconds = Math.floor((distance % _minute) / _second);
-
-			timerRev = `En ${hours > 9 ? hours : '0' + hours}H:${minutes > 9 ? minutes : '0' + minutes}M:${seconds > 9 ? seconds : '0' + seconds}S estaremos al aire`;
-		}
-	}
-
-	timer = setInterval(showRemaning, 1000);
-
-	/* ================================================================== */
-
-
 	import { goto } from '@sapper/app' //Redirecter
 
 	const preload = () => { //Toggle Preloader
@@ -53,10 +22,27 @@
 	const loginTrigger = (e) => { //Trigger Login
 		e.preventDefault()
 		preload() //Trigger Preloader
-		const user = document.querySelector('#email').value
-		const password = document.querySelector('#password').value
-		console.log(user,password)
-		localStorage.setItem('User', user)
+		let user = document.querySelector('#email').value
+		let tlf = document.querySelector('#tlf').value
+
+		fetch('http://149.28.104.43:3000/users/adriansalvatori@gmail.com', {
+			headers: {
+				'Authorization': 'ed607a90e24ddb6a722babf5e21edc67', 'Content-Type': 'text/plain',
+			}
+		})
+			.then(function(response) {
+				return response.text();
+			})
+			.then(function(data) {
+				user = data
+				localStorage.setItem('user', user)
+				console.log(localStorage.getItem('user'))
+			})
+			.catch(function(err) {
+				console.error(err)
+				if(err) user = {user:user, tlf: tlf}
+			})
+
 		/**
 		 * Here we Await for the Api to validate
 		*/
@@ -77,20 +63,7 @@
 	<title>FIMPU 2020</title>
 </svelte:head>
 
-
-<div id="counterClock" class="hero is-primary is-fullheight">
-	<div class="hero-body">
-		<div class="container">
-			<div class="box">
-				<img src="logo.svg" class="has-margin-top-20" alt="">
-			</div>
-			<div class="title is-2"><span>Pronto</span> <span>Comenzará</span> <span>el</span> <span>FIMPU</span> <span>2020</span></div>
-			<p id="counter" class="title is-4" style="margin: 10px auto">{timerRev}</p>
-		</div>
-	</div>
-</div>
-
-<div id="login" class="hero is-hidden is-fullheight is-relative is-clipped">
+<div id="login" class="hero is-fullheight is-relative is-clipped">
 	<div class="is-overlay">
 		<div class="hero is-fullheight" style="background: url('lobby.jpg');"></div>
 	</div>
@@ -106,12 +79,17 @@
 									<input id="email" required type="email" placeholder="Su correo electrónico" class="input is-rounded">
 								</div>
 								<div class="field">
-									<input id="password" required type="number" placeholder="Su número telefónico" class="input is-rounded">
+									<input id="tlf" required type="number" placeholder="Su número telefónico" class="input is-rounded">
 								</div>
 								<div class="field">
 									<label class="checkbox">
 										<input required type="checkbox">
-										Acepto los <a href="/terms" class="link">Términos y Condiciones</a>
+										Acepto la <a href="https://www.rtvc.gov.co/politicas-de-privacidad" target="_blank" class="link">política de privacidad de datos
+											</a>
+									</label>
+									<label class="checkbox">
+										<input required type="checkbox">
+										Acepto el <a href="https://www.rtvc.gov.co/politicas-de-privacidad" target="_blank" class="link">tratamiento de datos</a>
 									</label>
 								</div>
 								<div class="field">

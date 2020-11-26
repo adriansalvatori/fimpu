@@ -28,6 +28,7 @@
     let labels = [],
         data = [],
         text = '',
+        time = 60,
         title = '',
         options = {
             labels: labels,
@@ -36,6 +37,8 @@
                 data: data,
             }]
         }
+
+    
 
     /**
      * Manejando Encuestas : Admin
@@ -53,10 +56,15 @@
     const emitOptions = () => {
         socket.emit('poll', {
             title: title,
+            time: time,
             labels: labels,
             data: data,
             room: room
         })
+    }
+
+    const stackOptions = () => {
+
     }
 
     const stopOptions = () => {
@@ -87,11 +95,14 @@
      * Manejando encuestas : Client
      */
 
+     let clock
+
     socket.on('poll-running', (poll) => {
         if (poll.room === room) {
             console.log(poll)
             labels = poll.labels
             data = poll.data
+            time = poll.time
             title = poll.title
             options = {
                 labels: labels,
@@ -102,9 +113,28 @@
             }
             console.log(options)
             toggleClientModal()
+            setInterval(() => {
+                
+            }, 1000);
+            Timer(time)
         }
     })
 
+    const Timer = (time) => {
+        let ms = time * 1000
+        const interval = setInterval(() => {
+            time = time - 1
+            clock = time
+        }, 1000)
+
+        setTimeout(() => {
+            clearInterval(interval)
+            clock = 0
+            document.querySelector('.client-options-container').classList.add('is-hidden')
+            document.querySelector('.client-chart-container').classList.remove('is-hidden')
+        }, ms);
+    }
+ 
     const Vote = (index) => {
         socket.emit('poll-vote', ({
             index: index,
@@ -140,8 +170,16 @@
             <Chart {options} />
             <div class="card-content">
                 <h4 class="title is-6">Título de la Encuesta</h4>
-                <div class="field">
-                    <input type="text" placeholder="Insertar título de la encuesta" bind:value={title} class="input">
+                <div class="field has-addons">
+                    <div class="control is-expanded">
+                        <input type="text" placeholder="Insertar título de la encuesta" bind:value={title} class="input">
+                    </div>
+                    <div class="control">
+                        <input type="number" placeholder="Texto" bind:value={time} class="input">
+                    </div>
+                    <div class="control">
+                        <button  class="button is-static">segundos</button>
+                    </div>
                 </div>
                 {#each options.labels as item}
                     <section class="button is-light">
@@ -165,13 +203,20 @@
             </div>
             <div class="card-footer">
                 <div class="card-footer-item">
-                    <button on:click={toggleAdminModal} class="button is-danger is-outlined">Cancelar</button>
+                    <button on:click={toggleAdminModal} class="button is-small is-danger is-outlined">Cancelar</button>
                 </div>
                 <div class="card-footer-item">
-                    <button on:click={stopOptions} class="button is-primary">Detener Encuesta</button>
+                    <button on:click={stopOptions} class="button is-small is-primary">Detener Encuesta</button>
                 </div>
                 <div class="card-footer-item">
-                    <button on:click={emitOptions} class="button is-primary">Emitir Encuesta</button>
+                    <div class="field has-addons">
+                        <div class="control">
+                            <button on:click={stackOptions} class="button is-small is-primary is-outlined">Agregar a la lista</button>
+                        </div>
+                        <div class="control">
+                            <button on:click={emitOptions} class="button is-small is-primary">Emitir Encuesta</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -186,7 +231,7 @@
 
 <div id="get-options" class="column is-5 is-offset-6 is-hidden">
     <div class="box content is-small has-background-primary has-text-centered">
-        <h2 class="title is-4 has-text-white">{title}</h2>
+    <h2 class="title is-4 has-text-white">{title}</h2>
         <div class="client-chart-container is-hidden">
             <Chart {options}/>
         </div>
@@ -199,7 +244,9 @@
                 {/each}
             </div>
         </div>
+        <div id="timer-container" class="button has-margin-top-20 is-static is-full-width">Restan {clock} segundos</div>
     </div>
+    
 </div>
 {/if}
 
@@ -207,5 +254,10 @@
     #get-options {
         transition: ease-out 0.4s;
         transform: translateY(-50%)
+    }
+
+    .client-chart-container {
+        background: white;
+        border-radius: 5px;
     }
 </style>

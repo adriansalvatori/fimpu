@@ -12,13 +12,20 @@ if(placeholder === '') placeholder = "Escribe acá"
 const socket = io(window.location.host)
 
 let message = ''
-let user = localStorage.getItem('User')
+
+let user = JSON.stringify(localStorage.getItem('User'))
+
+
+
 const handleSubmit = () => {
     if(message!=''){
         socket.emit(event, {message:message,room:room, user:user})
         message = ''
     }
 }
+
+socket.emit('new-user', JSON.parse(localStorage.getItem('user')))
+
 </script>
 
 <style>
