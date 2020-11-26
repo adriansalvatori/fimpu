@@ -54,8 +54,8 @@ const updateComponent = () => {
     {#each messages as message, index}
         <section id="message{index}" class="notification message is-white">
             <div class="columns">
-                <div class="column is-9">
-                    <small class="content is-small has-text-primary">{message.user}</small><br>
+                <div class="content is-small column is-9">
+                    <small class="has-text-primary">{message.user}</small><br>
                     <span>{message.message}</span>
                 </div>
                 { #if ( approval===true )}

@@ -48,6 +48,7 @@
             display: none;
         }
     }
+
 </style>
 
 <div id="lobby-salas" class="hero is-fullheight is-relative0 is-clipped">
@@ -71,7 +72,7 @@
                 <div class="column is-5">
                     <div class="logoFimpu">
                         <img src="logo.svg" alt="">
-                        <h1 class="has-text-primary has-text-weight-bold">MEMORIAS 2019</h1>
+                        <h1 class="has-text-primary has-text-weight-bold">MEMORIAS <br> 2019</h1>
                     </div>
                 </div>
                 <div id="imageContainer" class="column is-7">

@@ -57,9 +57,19 @@ html {
     justify-content: center;
 }
 
+$radius: 20px;
+
 .card, .notification {
-    border-radius: 15px;
+    border-radius: $radius;
     overflow: hidden;
+}
+
+.box {
+    border-radius: $radius;
+
+    &.has-border-link {
+        border: solid 2px $link;
+    }
 }
 
 .is-overlay {
