@@ -66,7 +66,7 @@
 	<div class="hero-footer">
 		<div class="container">
 			<a href="/medios" id="volver" class="button is-primary has-margin-bottom-50"><span class="icon is-small"><i
-						data-feather="chevrons-left"></i></span><span>Volver a salón de Medios</span></a>
+						data-feather="chevrons-left"></i></span><span>Volver a Salón de Medios</span></a>
 		</div>
 	</div>
 </section>

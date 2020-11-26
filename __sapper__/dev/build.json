@@ -1,27 +1,9 @@
 {
   "bundler": "rollup",
   "shimport": "1.0.1",
-  "assets": {
-    "main": "client.722b6b7f.js"
-  },
+  "assets": {},
   "css": {
     "main": "main.766617049.css",
-    "chunks": {
-      "index.svelte": [],
-      "memorias.svelte": [],
-      "medios/index.svelte": [],
-      "medios/[slug].svelte": [],
-      "about.svelte": [],
-      "admin/index.svelte": [],
-      "admin/agenda/index.svelte": [],
-      "admin/medios/index.svelte": [],
-      "admin/medios/[slug].svelte": [],
-      "admin/salas/index.svelte": [],
-      "admin/salas/[slug].svelte": [],
-      "lobby.svelte": [],
-      "salas/index.svelte": [],
-      "salas/lideres.svelte": [],
-      "salas/[slug].svelte": []
-    }
+    "chunks": {}
   }
 }
