@@ -9,7 +9,6 @@
 
 	#counterClock {
 		z-index: 99999;
-		position: fixed;
 	}
 </style>
 
@@ -67,7 +66,6 @@
 		}, 1000);
 	}
 
-	const title = "Pronto comenzará el FIMPU 2020"
 	let register = () => {
 		window.location.replace('https://www.rtvc.gov.co/fimpu#block-webform-client-block-14596');
 	}
@@ -86,7 +84,7 @@
 			<div class="box">
 				<img src="logo.svg" class="has-margin-top-20" alt="">
 			</div>
-			<div class="title is-2">{title}</div>
+			<div class="title is-2"><span>Pronto</span> <span>Comenzará</span> <span>el</span> <span>FIMPU</span> <span>2020</span></div>
 			<p id="counter" class="title is-4" style="margin: 10px auto">{timerRev}</p>
 		</div>
 	</div>
