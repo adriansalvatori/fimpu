@@ -7,25 +7,9 @@
 		}
 	}
 
-	#coverGlobal {
+	#counterClock {
+		z-index: 99999;
 		position: fixed;
-		top: 0;
-		left: 0;
-
-		display: block;
-
-		z-index: 999;
-	}
-
-	#content {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
-	#content .pronto {
-		width: 80%;
-		white-space: pre-line;
 	}
 </style>
 
@@ -83,7 +67,7 @@
 		}, 1000);
 	}
 
-	console.log('Actualización: v3-1822 -- DEV')
+	const title = "Pronto comenzará el FIMPU 2020"
 </script>
 
 <svelte:head>
@@ -91,17 +75,19 @@
 </svelte:head>
 
 
-<div id="coverGlobal" class="cover has-background-primary" style="width: 100vw; height: 100vh">
-	<div id="content" class="box has-background-primary" style="width: 100vw; height: 100vh; display: flex; flex-flow: column;">
-		<div class="box">
-			<img src="logo.svg" class="has-margin-top-20" alt="">
+<div id="counterClock" class="hero is-primary is-fullheight">
+	<div class="hero-body">
+		<div class="container">
+			<div class="box">
+				<img src="logo.svg" class="has-margin-top-20" alt="">
+			</div>
+			<div class="title is-2">{title}</div>
+			<p id="counter" class="title is-4" style="margin: 10px auto">{timerRev}</p>
 		</div>
-		<p class="title is-2 has-text-white pronto" style="margin: 10px auto;">Pronto comenzará el FIMPU 2020</p>
-		<p id="counter" class="title is-4 has-text-white pronto" style="margin: 10px auto">{timerRev}</p>
 	</div>
 </div>
 
-<div id="login" class="hero is-fullheight is-relative is-clipped">
+<div id="login" class="hero is-hidden is-fullheight is-relative is-clipped">
 	<div class="is-overlay">
 		<div class="hero is-fullheight" style="background: url('lobby.jpg');"></div>
 	</div>
