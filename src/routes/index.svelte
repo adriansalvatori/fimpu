@@ -67,15 +67,12 @@
 		}, 1000);
 	}
 
-<<<<<<< HEAD
 	const title = "Pronto comenzará el FIMPU 2020"
-=======
 	let register = () => {
 		window.location.replace('https://www.rtvc.gov.co/fimpu#block-webform-client-block-14596');
 	}
 
 	console.log('Actualización: v3-1822 -- DEV')
->>>>>>> 06cb3123db0800b405a42893816cfbd3d7fb1dd1
 </script>
 
 <svelte:head>
