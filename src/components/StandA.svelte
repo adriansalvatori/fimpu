@@ -115,7 +115,7 @@
     {#if stand.chat}
     <div class="chat-trigger">
         <StandChat/>
-        <a on:click={openModal} class="button is-rounded is-primary is-uppercase has-chat">Punto de Contácto</a>
+        <a on:click={openModal} class="button is-rounded is-primary is-uppercase has-chat">Punto de Contacto</a>
     </div>
     {/if}
 </div>

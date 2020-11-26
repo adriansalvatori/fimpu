@@ -117,7 +117,7 @@
             <a href="/lobby" id="volver" class="button has-margin-left-25px is-primary has-margin-bottom-50"><span class="icon is-small"><i
                 data-feather="chevrons-left"></i></span><span>Volver al Lobby</span></a>
         </div>
-     
+
         <div class="is-flex justify-content-end">
                 <img src="membrete.svg" alt="">
         </div>
