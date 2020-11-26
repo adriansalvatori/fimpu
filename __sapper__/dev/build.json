@@ -1,6 +1,7 @@
 {
   "bundler": "rollup",
   "shimport": "1.0.1",
+<<<<<<< HEAD
   "assets": {
     "main": "client.783ffc97.js"
   },
@@ -23,5 +24,11 @@
       "salas/lideres.svelte": [],
       "salas/[slug].svelte": []
     }
+=======
+  "assets": {},
+  "css": {
+    "main": "main.3660135044.css",
+    "chunks": {}
+>>>>>>> 06cb3123db0800b405a42893816cfbd3d7fb1dd1
   }
 }
