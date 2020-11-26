@@ -23,9 +23,9 @@
 		align-items: center;
 	}
 
-	#content p {
+	#content .pronto {
 		width: 80%;
-		word-break: break-word;
+		white-space: nowrap;
 	}
 </style>
 
@@ -96,8 +96,8 @@
 		<div class="box">
 			<img src="logo.svg" class="has-margin-top-20" alt="">
 		</div>
-		<p class="title is-2 has-text-white" style="margin: 10px auto">Pronto comenzará el FIMPU 2020</p>
-		<p id="counter" class="title is-3 has-text-white" style="margin: 10px auto">{timerRev}</p>
+		<p class="title is-2 has-text-white pronto" style="margin: 10px auto;">Pronto comenzará el FIMPU 2020</p>
+		<p id="counter" class="title is-4 has-text-white" style="margin: 10px auto">{timerRev}</p>
 	</div>
 </div>
 

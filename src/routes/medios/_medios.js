@@ -5,7 +5,7 @@ const medios = [
     type:'a',
     website:'https://www.rtvc.gov.co',
     background: 'rtvc-stand.jpg',
-    pdf:'https://www.rtvc.gov.co/quienes-somos/quienes-somos',
+    pdf:'rtvcSTAND.pdf',
     gallery: ['rtvc-gallery-1.jpg', 'rtvc-gallery-2.jpg', 'rtvc-gallery-3.jpg', 'rtvc-gallery-4.jpg', 'rtvc-gallery-5.jpg', 'rtvc-gallery-6.jpg', 'rtvc-gallery-7.jpg', 'rtvc-gallery-8.jpg', 'rtvc-gallery-9.jpg', 'rtvc-gallery-10.jpg',  'rtvc-gallery-12.jpeg', 'rtvc-gallery-13.jpg',  'rtvc-gallery-16.jpg', 'rtvc-gallery-17.jpg'],
     iframe: 'https://player.vimeo.com/video/482915682',
     chat:true
@@ -15,10 +15,10 @@ const medios = [
     type:'a',
     website:'https://www.mintic.gov.co',
     background: 'mintic-stand.jpg',
-    pdf:'https://www.mintic.gov.co/portal/inicio/Ministerio/Acerca-del-MinTIC/',
+    pdf:'',
     gallery: ['mintic-gallery-2.jpg', 'mintic-gallery-3.jpg', 'mintic-gallery-4.jpg', 'mintic-gallery-5.jpg'],
     iframe: 'https://player.vimeo.com/video/482910352',
-    chat:true
+    chat:false
 }, {
     title: 'Canal 13',
     slug: 'canal-13',
@@ -34,7 +34,7 @@ const medios = [
     website: 'https://www.telecaribe.co',
     type:'b',
     background: 'telecaribe-stand.jpg',
-    pdf:'https://www.telecaribe.co/nosotros',
+    pdf:'',
     gallery: ['telecaribe-1.jpg', 'telecaribe-2.jpg', 'telecaribe-3.jpg', 'telecaribe-4.jpg'],
     iframe: 'https://player.vimeo.com/video/481395545'
 }, {
@@ -43,7 +43,7 @@ const medios = [
     website: 'https://www.canaltro.com',
     type:'b',
     background: 'tro-stand.jpg',
-    pdf:'https://canaltro.com/intitucional/quienes-somos/',
+    pdf:'',
     gallery: ['tro-1.JPG', 'tro-2.JPG', 'tro-3.JPG', 'tro-4.JPG'],
     iframe: 'https://player.vimeo.com/video/481395920'
 }, {

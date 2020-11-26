@@ -80,6 +80,12 @@
             cursor: pointer
         }
     }
+
+    #btnGaleria {
+        position: absolute;
+        bottom: 150px;
+        left: 15%;
+    }
 </style>
 
 <div class="controls">
@@ -93,6 +99,7 @@
     {/if}
     <!-- Galería -->
     {#if stand.gallery}
+    <a id="btnGaleria" on:click={openGallery} class="button is-rounded is-primary is-uppercase">Galería</a>
     <div class="gallery-trigger">
         <div class="imagen-inicial" on:click={openGallery}></div>
     </div>
@@ -105,11 +112,10 @@
     </div>
     {/if}
     <!-- PDF -- Chat Modal -->
-    {#if stand.pdf}
+    {#if stand.chat}
     <div class="chat-trigger">
         <StandChat/>
         <a on:click={openModal} class="button is-rounded is-primary is-uppercase has-chat">Punto de Contácto</a>
     </div>
     {/if}
-    
 </div>
