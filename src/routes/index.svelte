@@ -83,6 +83,10 @@
 		}, 1000);
 	}
 
+	let register = () => {
+		window.location.replace('https://www.rtvc.gov.co/fimpu#block-webform-client-block-14596');
+	}
+
 	console.log('Actualización: v3-1822 -- DEV')
 </script>
 
@@ -132,7 +136,7 @@
 									</button>
 									<button type="submit" class="button is-primary is-rounded is-outlined">
 										<span><i data-feather="user"></i></span>
-										<span>Registrarse</span>
+										<span on:click="{register}">Registrarse</span>
 									</button>
 								</div>
 							</form>
