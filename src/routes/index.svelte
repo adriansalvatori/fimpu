@@ -25,7 +25,7 @@
 
 	#content .pronto {
 		width: 80%;
-		white-space: pre-line;
+		white-space: normal;
 	}
 </style>
 
