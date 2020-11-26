@@ -54,7 +54,7 @@
                                     <br>
                                     <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
                                         <span class="icon is-small"><i data-feather="clock"></i></span> 
-                                        <small>9:30am</small>
+                                        <small>9:15am</small>
                                     </a>
                                     <a href="/salas/auditorio" class="button is-small is-link is-outlined">
                                         <span class="icon is-small"><i data-feather="users"></i></span> 
@@ -82,11 +82,43 @@
                             </div>
                             <div class="media-content">
                                 <div class="content has-margin-bottom-20">
+                                    <strong class="has-text-primary has-margin-bottom-10">Generación de contenidos convergentes</strong>
+                                    <br>
+                                    <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
+                                        <span class="icon is-small"><i data-feather="clock"></i></span> 
+                                        <small>9:45am</small>
+                                    </a>
+                                    <a href="/salas/auditorio" class="button is-small is-link is-outlined">
+                                        <span class="icon is-small"><i data-feather="users"></i></span> 
+                                        <small>Auditorio Principal</small>
+                                    </a>
+                                </div>
+                                <div>
+                                    	<strong>Conferencista:</strong>
+                                        <ul>
+                                            <li>Damián Kirzner</li>
+                                            <small>Director de Mediamorfosis</small>
+                                        </ul>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="column is-12">
+                    <div class="box">
+                        <article class="media">
+                            <div class="media-left has-text-primary">
+                                <figure class="image is-64x64">
+                                    <i data-feather="calendar"></i>
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <div class="content has-margin-bottom-20">
                                     <strong class="has-text-primary has-margin-bottom-10">Medios públicos, innovando en la pandemia</strong>
                                     <br>
                                     <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
                                         <span class="icon is-small"><i data-feather="clock"></i></span> 
-                                        <small>10:00am</small>
+                                        <small>10:30am</small>
                                     </a>
                                     <a href="/salas/auditorio" class="button is-small is-link is-outlined">
                                         <span class="icon is-small"><i data-feather="users"></i></span> 
@@ -136,7 +168,7 @@
                                     <br>
                                     <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
                                         <span class="icon is-small"><i data-feather="clock"></i></span> 
-                                        <small>11:00am</small>
+                                        <small>11:30am</small>
                                     </a>
                                     <a href="/salas/auditorio" class="button is-small is-link is-outlined">
                                         <span class="icon is-small"><i data-feather="users"></i></span> 
@@ -169,7 +201,7 @@
                                     <br>
                                     <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
                                         <span class="icon is-small"><i data-feather="clock"></i></span> 
-                                        <small>11:30am</small>
+                                        <small>12:00pm</small>
                                     </a>
                                     <a href="/salas/auditorio" class="button is-small is-link is-outlined">
                                         <span class="icon is-small"><i data-feather="users"></i></span> 
@@ -221,7 +253,7 @@
                                     <br>
                                     <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
                                         <span class="icon is-small"><i data-feather="clock"></i></span> 
-                                        <small>12:30pm</small>
+                                        <small>01:00pm</small>
                                     </a>
                                     <a href="/salas/auditorio" class="button is-small is-link is-outlined">
                                         <span class="icon is-small"><i data-feather="users"></i></span> 
@@ -254,7 +286,7 @@
                                     <br>
                                     <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
                                         <span class="icon is-small"><i data-feather="clock"></i></span> 
-                                        <small>1:15pm</small>
+                                        <small>1:30pm</small>
                                     </a>
                                     <a href="/salas/auditorio" class="button is-small is-link is-outlined">
                                         <span class="icon is-small"><i data-feather="users"></i></span> 

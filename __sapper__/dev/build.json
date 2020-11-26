@@ -2,10 +2,10 @@
   "bundler": "rollup",
   "shimport": "1.0.1",
   "assets": {
-    "main": "client.e5706621.js"
+    "main": "client.8e103aa2.js"
   },
   "css": {
-    "main": "main.1404712850.css",
+    "main": "main.2381050805.css",
     "chunks": {
       "index.svelte": [],
       "memorias.svelte": [],
@@ -13,6 +13,7 @@
       "medios/[slug].svelte": [],
       "about.svelte": [],
       "admin/index.svelte": [],
+      "admin/metricas.svelte": [],
       "admin/agenda/index.svelte": [],
       "admin/medios/index.svelte": [],
       "admin/medios/[slug].svelte": [],
