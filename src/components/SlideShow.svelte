@@ -21,9 +21,15 @@
             slideBy: 'page',
             autoplay: false,
             mouseDrag: true,
-            controlsContainer: '.controls-container',
-            nextButton:'.goes-next',
-            prevButton:'.goes-prev'
+        })
+
+        let next = document.querySelector('.goes-next'), prev = document.querySelector('.goes-prev')
+
+        next.addEventListener('click', () => {
+            slider.goTo('prev')
+        })
+        prev.addEventListener('click', () => {
+            slider.goTo('next')
         })
     })
 </script>
@@ -36,6 +42,17 @@
         align-items: center;
         overflow: hidden;
     }
+
+    .controls-container {
+        position: fixed;
+        transform: translateX(-50%);
+        left: 50%;
+        top: 50%;
+        z-index: 9999;
+        width: 90vw;
+        display: flex;
+        justify-content: space-between;
+    }
 </style>
 
 <div id="galeria-interactiva" class="modal">
@@ -43,7 +60,8 @@
     <div class="modal-content">
         <div class="container">
             <div class="controls-container">
-                <div class="controls-container"><img class="goes-next" src="arrow-left-circle.svg"><img class="goes-prev" src="arrow-right-circle.svg"></div>
+                <div class="button is-light goes-next"><span class="icon"><i data-feather="arrow-left-circle"></i></span></div>
+                <div class="button is-light goes-prev"><span class="icon"><i data-feather="arrow-right-circle"></i></span></div>
             </div>
             <div class="gallery columns">
                 {#each images as image}

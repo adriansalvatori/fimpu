@@ -112,10 +112,19 @@
         </div>
     </div>
     <div class="hero-footer">
+<<<<<<< HEAD
         <img class="decoration" src="decoration.svg" alt=""> 
         <div class="is-flex justify-content-end">
             <a href="/lobby" id="volver" class="button has-margin-left-25px is-primary has-margin-bottom-50" style="position: absolute; bottom: 50px; left: 15%; margin-left: 0px"><span class="icon is-small"><i
+=======
+        <div class="is-flex justify-content-start">
+            <img class="decoration" src="decoration.svg" alt=""> 
+            <a href="/lobby" id="volver" class="button has-margin-left-25px is-primary has-margin-bottom-50"><span class="icon is-small"><i
+>>>>>>> b7c30ff824b0f206948bb451452ca41e85c2f2c5
                 data-feather="chevrons-left"></i></span><span>Volver al Lobby</span></a>
+        </div>
+     
+        <div class="is-flex justify-content-end">
                 <img src="membrete.svg" alt="">
         </div>
     </div>
