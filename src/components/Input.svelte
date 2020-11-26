@@ -27,7 +27,7 @@ const handleSubmit = () => {
         border-bottom-left-radius: 321654px !important;
         border-top-left-radius: 321654px !important;
         margin-left: -50%;
-        z-index: 9999999999 !important;
+        z-index: 10 !important;
     }
 </style>
 
