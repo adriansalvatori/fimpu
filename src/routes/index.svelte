@@ -25,7 +25,7 @@
 
 	#content .pronto {
 		width: 80%;
-		white-space: nowrap;
+		white-space: pre-line;
 	}
 </style>
 
@@ -97,7 +97,7 @@
 			<img src="logo.svg" class="has-margin-top-20" alt="">
 		</div>
 		<p class="title is-2 has-text-white pronto" style="margin: 10px auto;">Pronto comenzará el FIMPU 2020</p>
-		<p id="counter" class="title is-4 has-text-white" style="margin: 10px auto">{timerRev}</p>
+		<p id="counter" class="title is-4 has-text-white pronto" style="margin: 10px auto">{timerRev}</p>
 	</div>
 </div>
 

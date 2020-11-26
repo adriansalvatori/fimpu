@@ -113,9 +113,9 @@
                                     </ul>
                                     <strong>Moderador:</strong>
                                     <ul>
-                                        <li>Jean-François Fogel</li>
-                                        <li>Periodista y ensayista. Miembro del Consejo Rector Fundación Gabo
-                                        </li>
+                                        <li>Gabriel Levy</li>
+                                        <!-- <li>Periodista y ensayista. Miembro del Consejo Rector Fundación Gabo
+                                        </li> -->
                                     </ul>
                                 </div>
                             </div>
