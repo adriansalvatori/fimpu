@@ -506,7 +506,7 @@
                                     <br>
                                     <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
                                         <span class="icon is-small"><i data-feather="clock"></i></span> 
-                                        <small>4:15pm</small>
+                                        <small>3:30pm</small>
                                     </a>
                                     <a href="/salas/auditorio" class="button is-small is-link is-outlined">
                                         <span class="icon is-small"><i data-feather="users"></i></span> 
@@ -520,56 +520,6 @@
                                         <li>Líder de productores delegados en Señal Colombia
                                         </li>
                                     </ul>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                <div class="column is-12">
-                    <div class="box">
-                        <article class="media">
-                            <div class="media-left has-text-primary">
-                                <figure class="image is-64x64">
-                                    <i data-feather="calendar"></i>
-                                </figure>
-                            </div>
-                            <div class="media-content">
-                                <div class="content has-margin-bottom-20">
-                                    <strong class="has-text-primary has-margin-bottom-10">Video mejores momentos</strong>
-                                    <br>
-                                    <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
-                                        <span class="icon is-small"><i data-feather="clock"></i></span> 
-                                        <small>5:00pm</small>
-                                    </a>
-                                    <a href="/salas/auditorio" class="button is-small is-link is-outlined">
-                                        <span class="icon is-small"><i data-feather="users"></i></span> 
-                                        <small>Auditorio Principal</small>
-                                    </a>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                <div class="column is-12">
-                    <div class="box">
-                        <article class="media">
-                            <div class="media-left has-text-primary">
-                                <figure class="image is-64x64">
-                                    <i data-feather="calendar"></i>
-                                </figure>
-                            </div>
-                            <div class="media-content">
-                                <div class="content has-margin-bottom-20">
-                                    <strong class="has-text-primary has-margin-bottom-10">Selección de contenidos de medios públicos en la pandemia</strong>
-                                    <br>
-                                    <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
-                                        <span class="icon is-small"><i data-feather="clock"></i></span> 
-                                        <small>5:03pm</small>
-                                    </a>
-                                    <a href="/salas/auditorio" class="button is-small is-link is-outlined">
-                                        <span class="icon is-small"><i data-feather="users"></i></span> 
-                                        <small>Auditorio Principal</small>
-                                    </a>
                                 </div>
                             </div>
                         </article>
