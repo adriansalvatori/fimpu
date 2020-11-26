@@ -10,6 +10,7 @@
         width: 100%;
         display: flex;
         justify-content: space-between;
+        font-size: 1.7vh;
     }
 
     $gradient: linear-gradient(71deg, rgba(161,0,224,1) 0%, rgba(231,60,41,1) 100%);
@@ -31,7 +32,7 @@
 <div id="lobby-medios" style="background: url('lobby-stands.jpg');" class="hero is-fullheight is-relative is-primary is-clipped">
 	<div class="hero-body">
         <div class="container">
-            <div class="columns controls">
+            <div class="columns is-mobile controls">
                 <div class="column is-2">
                     <a href="/medios/mintic" class="button is-rounded is-primary is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio MinTIC</span></a>
                     <a href="/medios/rtvc" class="button is-rounded is-primary is-uppercase has-text-weight-bold is-control"><span class="icon is-small"><i data-feather="share-2"></i></span><span>Espacio RTVC</span></a>

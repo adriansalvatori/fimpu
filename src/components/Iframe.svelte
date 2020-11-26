@@ -2,7 +2,7 @@
     export let sala
     import Player from '@vimeo/player'
 
-    const socket = io('http://localhost:3000')
+    const socket = io(window.location.host)
 
     let iframe = sala.iframe
 

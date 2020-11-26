@@ -55,16 +55,10 @@
     <RoomChange room={sala.slug}  admin={false}/>
     <div class="hero-header has-padding-30">
         <div class="columns">
-            <div class="column is-5"><a href="/"><img class="logo" src="logo-salas.svg" alt=""></a></div>
+            <div class="column is-5"><img src="logo-salas.svg" alt=""></div>
             <div class="column is-3 is-offset-4">
-                <a href="lobby" class="button is-primary is-small is-outlined"><span class="icon is-small"><i
-                            data-feather="user"></i></span><span>Perfil</span></a>
-                <button on:click={abrirAgenda} class="button is-primary is-small is-outlined"><span
-                        class="icon is-small"><i data-feather="user"></i></span><span>Agenda</span></button>
-                <a href="lobby" class="button is-primary is-small is-outlined"><span class="icon is-small"><i
-                            data-feather="user"></i></span><span>Configuración</span></a>
-                <a href="lobby" class="button is-primary is-small is-outlined"><span class="icon is-small"><i
-                            data-feather="user"></i></span><span>Ayuda</span></a>
+                <a on:click={abrirAgenda} class="button is-primary is-small is-outlined"><span class="icon is-small"><i data-feather="user"></i></span><span>Agenda</span></a>
+                <a href="lobby" class="button is-primary is-small is-outlined"><span class="icon is-small"><i data-feather="user"></i></span><span>Volver</span></a>
             </div>
         </div>
     </div>

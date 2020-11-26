@@ -31,6 +31,16 @@ const { server } = polka() // You can also use Express
 	} 
 
 	io.on('connection', (socket) => {
+
+
+		/**
+		 * Evento de Ayuda
+		 */
+
+		socket.on('ayuda', (res) => {
+			socket.broadcast.emit('ayuda', res)
+		})
+
 		/** 
 		 * Eventos de Mensajes 
 		 * */

@@ -1,10 +1,14 @@
 <script>
     import SlideShow from "./SlideShow.svelte"
+    import StandChat from "./StandChat.svelte"
     export let stand
     
     let images = stand.gallery
     const openGallery = () => {
         document.querySelector('#galeria-interactiva').classList.toggle('is-active')
+    }
+    const openModal = () => {
+        document.querySelector('#standchat').classList.toggle('is-active')
     }
 </script>
 
@@ -24,6 +28,7 @@
             overflow: hidden;
             border-radius: 10px;
             box-shadow: 0 0 60px rgba(0, 0, 0, 0.3);
+            background: black;
         }
     }
 
@@ -55,6 +60,26 @@
             }
         }
     }
+
+    .gallery-trigger {
+        perspective: 1000px;
+        height: 33vh;
+        width: 22vh;
+        position: absolute;
+        left: 13vw;
+        bottom: 18vh;
+        mix-blend-mode: multiply;
+
+        .imagen-inicial {
+            height: 92%;
+            position: relative;
+            top: 5%;
+            left: 1.7%;
+            width: 83%;
+            transform: rotate3d(0, 1, 0.08, 21deg);
+            cursor: pointer
+        }
+    }
 </style>
 
 <div class="controls">
@@ -69,7 +94,7 @@
     <!-- Galería -->
     {#if stand.gallery}
     <div class="gallery-trigger">
-        <button on:click={openGallery} class="button is-primary is-uppercase has-gallery"><i data-feather="image"></i></button>
+        <div class="imagen-inicial" on:click={openGallery}></div>
     </div>
     <SlideShow {images}/>
     {/if}
@@ -82,7 +107,8 @@
     <!-- PDF -- Chat Modal -->
     {#if stand.pdf}
     <div class="chat-trigger">
-        <a target="_blank" href={stand.pdf} class="button is-rounded is-primary is-uppercase has-chat">Punto de Contácto</a>
+        <StandChat/>
+        <a on:click={openModal} class="button is-rounded is-primary is-uppercase has-chat">Punto de Contácto</a>
     </div>
     {/if}
     

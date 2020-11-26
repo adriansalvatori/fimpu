@@ -3,12 +3,48 @@
 </script>
 
 <style>
+	#coverGlobal {
+		position: fixed;
+		top: 0;
+		left: 0;
+
+		display: none;
+
+		z-index: 999;
+	}
+
+	#content {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	#content p {
+		width: 80%;
+		word-break: break-word;
+	}
+
+	@media screen and (max-width: 768px) {
+		#coverGlobal {
+			display: block;
+		}
+	}
+
+	@media (orientation: portrait) {
+		#coverGlobal {
+			display: block;
+		}
+	}
+
+	@media (orientation: landscape) {
+		#coverGlobal {
+			display: none;
+		}
+	}
 </style>
 
-<nav class="is-hidden">
-	<ul>
-		<li><a aria-current="{segment === undefined ? 'page' : undefined}" href=".">home</a></li>
-		<li><a aria-current="{segment === 'about' ? 'page' : undefined}" href="about">about</a></li>
-		<li><a rel=prefetch aria-current="{segment === 'blog' ? 'page' : undefined}" href="blog">blog</a></li>
-	</ul>
-</nav>
+<div id="coverGlobal" class="cover has-background-primary" style="width: 100vw; height: 100vh">
+	<div id="content" class="box has-background-primary" style="width: 100vw; height: 100vh">
+		<p class="title is-3 has-text-white">¡Gira tu dispositivo y empieza a disfrutar del FIMPU 2020!</p>
+	</div>
+</div>

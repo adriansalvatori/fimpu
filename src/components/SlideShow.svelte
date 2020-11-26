@@ -1,15 +1,30 @@
 <script>
-    import {onMount} from 'svelte'
-   
+    import {
+        onMount
+    } from 'svelte'
+
     export let images
 
     const closeGallery = () => {
         document.querySelector('#galeria-interactiva').classList.toggle('is-active')
     }
 
-    onMount( async () => {
-        let { tns } = await import("tiny-slider/src/tiny-slider") 
-        let slider = tns({ container: '.gallery', items: 1, slideBy: 'page', autoplay: false, mouseDrag: true})
+    onMount(async () => {
+        let {
+            tns
+        } = await import("tiny-slider/src/tiny-slider")
+        let slider = tns({
+            nav:false,
+            controls:false,
+            container: '.gallery',
+            items: 1,
+            slideBy: 'page',
+            autoplay: false,
+            mouseDrag: true,
+            controlsContainer: '.controls-container',
+            nextButton:'.goes-next',
+            prevButton:'.goes-prev'
+        })
     })
 </script>
 
@@ -27,6 +42,9 @@
     <div on:click={closeGallery} class="modal-background"></div>
     <div class="modal-content">
         <div class="container">
+            <div class="controls-container">
+                <div class="controls-container"><img class="goes-next" src="arrow-left-circle.svg"><img class="goes-prev" src="arrow-right-circle.svg"></div>
+            </div>
             <div class="gallery columns">
                 {#each images as image}
                     <div class="item column is-12">

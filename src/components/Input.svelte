@@ -8,12 +8,13 @@
 export let event //El evento que emitiremos
 export let room //La sala a la que emitiremos
 
-const socket = io('http://localhost:3000')
+const socket = io(window.location.host)
 
 let message = ''
+let user = localStorage.getItem('User')
 const handleSubmit = () => {
     if(message!=''){
-        socket.emit(event, {message:message,room:room})
+        socket.emit(event, {message:message,room:room, user:user})
         message = ''
     }
 }

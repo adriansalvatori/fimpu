@@ -1,5 +1,5 @@
 <script>
-const socket = io('http://localhost:3000')
+const socket = io(window.location.host)
 
 export let event, room, approval
 
@@ -7,7 +7,7 @@ let messages = []
 
 socket.on(event, (res) => {
     if(res.room == room){
-        messages.push(res.message)
+        messages.push({message:res.message, user: res.user})
         messages = messages //Actualizamos la vista de Mensajes
         updateComponent()
     }
@@ -55,8 +55,8 @@ const updateComponent = () => {
         <section id="message{index}" class="notification message is-white">
             <div class="columns">
                 <div class="column is-9">
-                    <small class="content is-small has-text-primary">Usuario equis</small><br>
-                    <span>{message}</span>
+                    <small class="content is-small has-text-primary">{message.user}</small><br>
+                    <span>{message.message}</span>
                 </div>
                 { #if ( approval===true )}
                 <div class="column is-3">

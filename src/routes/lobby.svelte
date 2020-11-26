@@ -88,7 +88,7 @@
 
     .button.is-control {
         position: absolute;
-
+        font-size: 1.8vh;
         &.stands {
             left: 22%;
             transform: translateY(-5vh);
@@ -116,19 +116,40 @@
     import Agenda from '../components/Agenda.svelte'
     import {onMount} from 'svelte'
     import Player from '@vimeo/player'
+    import Ayuda from '../components/Ayuda.svelte'
 
-    
+    const preload = () => { //Toggle Preloader
+        const loader = () => {document.querySelector('#preloader').classList.toggle('is-active')}  
+        loader()
+        setTimeout(() => {
+			loader() //Trigger Preloader
+		}, 2000);
+    }	
 
     const abrirAgenda = () => {
         document.querySelector('#agenda-interactiva').classList.toggle('is-active')
     }
 
+    const openAyuda = () => {
+        document.querySelector('#modal-ayuda').classList.toggle('is-active')
+    }
+
     const hideModal = () => {
         document.querySelector('#inicio').classList.remove('is-active')
+        const iframe = document.querySelector('#intro-iframe')
+        const introiframe = new Player(iframe)
+        introiframe.pause()
     }
 
     onMount(() => {
-        if(localStorage.getItem('firstTime') === 'false') hideModal()
+        
+        if(localStorage.getItem('firstTime') === 'false'){
+            hideModal()
+        } else {
+            const iframeintro = document.querySelector('#intro-iframe')
+            const introiframe = new Player(iframeintro)
+            introiframe.play()
+        }
         const iframe = document.querySelector('#lobby-loop')
         const lobbyloop = new Player(iframe)
         lobbyloop.setMuted(true)
@@ -136,7 +157,6 @@
         lobbyloop.play()
         localStorage.setItem('firstTime','false');
         console.log(localStorage)
-
     })
 
 
@@ -148,14 +168,14 @@
 </svelte:head>
 
 
-
+<Ayuda/>
 <div id="lobby" style="background: url('lobby.jpg');" class="hero is-fullheight is-relative is-primary is-clipped">
     <div class="hero-body">
         <!-- Pantalla -->
         <div class="screen-container hover-glow">
             <img src="screen.png" alt="">
             <div class="screen-content">
-                <iframe id="lobby-loop"  title="streamline" width="1280" height="720" src="https://player.vimeo.com/video/482797612"
+                <iframe id="lobby-loop"  title="streamline" width="1280" height="720" src="https://player.vimeo.com/video/483203871"
                     frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen></iframe>
@@ -163,7 +183,7 @@
         </div>
         <!-- Info -->
         <div class="pedestal-container hover-glow">
-            <img src="pedestal.png" alt="">
+            <img on:click={openAyuda} src="pedestal.png" alt="">
         </div>
         <!-- Menú -->
         <div class="menu-container hover-glow">
@@ -175,9 +195,9 @@
                         class="icon is-small"><i data-feather="calendar"></i></span><span>Agenda</span></button>
                 <a href="/salas/auditorio" class="button has-text-weight-bold is-primary is-outlined is-uppercase"><span
                         class="icon is-small"><i data-feather="users"></i></span><span>Auditorio Principal</span></a>
-                <a href="/memorias/2019" class="button has-text-weight-bold is-primary is-outlined is-uppercase"><span
+                <a href="/memorias/?2019" class="button has-text-weight-bold is-primary is-outlined is-uppercase"><span
                         class="icon is-small"><i data-feather="users"></i></span><span>Memorias 2019</span></a>
-                <a href="/memorias/2020" class="button has-text-weight-bold is-primary is-outlined is-uppercase"><span
+                <a disabled href="/memorias/?2020" class="button has-text-weight-bold is-primary is-outlined is-uppercase"><span
                         class="icon is-small"><i data-feather="users"></i></span><span>Memorias 2020</span></a>
                 <a href="/medios" class="button has-text-weight-bold is-primary is-outlined is-uppercase"><span
                         class="icon is-small"><i data-feather="share-2"></i></span><span>Salón de Medios
@@ -191,10 +211,10 @@
             <a href="/salas/auditorio"
                 class="button is-rounded is-small is-primary is-uppercase has-text-weight-bold is-control auditorio1"><span
                     class="icon is-small"><i data-feather="users"></i></span><span>Auditorio Principal</span></a>
-            <a href="/salas/1"
+            <a href="/salas/sala-1"
                 class="button is-rounded is-primary is-uppercase has-text-weight-bold is-control auditorio2"><span
                     class="icon is-small"><i data-feather="users"></i></span><span>Sala 1</span></a>
-            <a href="/salas/2"
+            <a href="/salas/sala-2"
                 class="button is-rounded is-primary is-uppercase has-text-weight-bold is-control auditorio3"><span
                     class="icon is-small"><i data-feather="users"></i></span><span>Sala 2</span></a>
         </div>
@@ -205,9 +225,11 @@
 <div id="inicio" class="modal is-active">
     <div class="modal-background"></div>
     <div class="modal-content">
-        <iframe title="streamline" style="width: 100%; height:50vh" src="https://player.vimeo.com/video/482797612"
+        <iframe id="intro-iframe" title="streamline" style="width: 100%; height:50vh" src="https://player.vimeo.com/video/483347625"
             frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen></iframe>
+
+            <button class="button is-primary is-inverted" aria-label="close" on:click={hideModal}>Omitir Introducción</button>
     </div>
     <button on:click={hideModal} class="modal-close is-large" aria-label="close"></button>
 </div>

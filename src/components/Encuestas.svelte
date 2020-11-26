@@ -9,7 +9,7 @@
      * 4: Un segundo modal que se muestra en la sala homóloga para redirigir según las opciones. se
      */
     import Chart from "./Chart.svelte"
-    const socket = io('http://localhost:3000')
+    const socket = io(window.location.host)
 
     export let room, admin
 
