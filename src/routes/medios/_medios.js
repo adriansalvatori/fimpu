@@ -26,7 +26,7 @@ const medios = [
     type:'b',
     background: '13-stand.jpg',
     pdf:'canal-13.pdf',
-    gallery: ['canal-13-1.jpg', 'canal-13-2.jpg'],
+    gallery: ['canal-13-1.jpg', 'canal-13-2.jpg','canal-13-3.jpg', 'canal-13-4.jpg'],
     iframe: 'https://player.vimeo.com/video/481395192'
 }, {
     title: 'Telecaribe',
