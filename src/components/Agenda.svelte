@@ -114,8 +114,8 @@
                                     <strong>Moderador:</strong>
                                     <ul>
                                         <li>Gabriel Levy</li>
-                                        <!-- <li>Periodista y ensayista. Miembro del Consejo Rector Fundación Gabo
-                                        </li> -->
+                                        <li>Académico y consultor en Tecnologías de Información y Comunicación
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -323,6 +323,221 @@
                                         <li>Gerente de RTVC Sistema de Medios Públicos
                                         </li>
                                     </ul>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="column is-12">
+                    <div class="box">
+                        <article class="media">
+                            <div class="media-left has-text-primary">
+                                <figure class="image is-64x64">
+                                    <i data-feather="calendar"></i>
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <div class="content has-margin-bottom-20">
+                                    <strong class="has-text-primary has-margin-bottom-10">Apuestas experimentales de colectivos y comunidades /Juegos Sonoros</strong>
+                                    <br>
+                                    <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
+                                        <span class="icon is-small"><i data-feather="clock"></i></span> 
+                                        <small>3:30pm</small>
+                                    </a>
+                                    <a href="/salas/auditorio" class="button is-small is-link is-outlined">
+                                        <span class="icon is-small"><i data-feather="users"></i></span> 
+                                        <small>Auditorio Principal</small>
+                                    </a>
+                                </div>
+                                <div>
+                                    <strong>Tallerista:</strong>
+                                    <ul>
+                                        <li>Francisco Godinez</li>
+                                        <li>Cofundador y director del Centro de Producciones Radiofónicas - CPR.
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="column is-12">
+                    <div class="box">
+                        <article class="media">
+                            <div class="media-left has-text-primary">
+                                <figure class="image is-64x64">
+                                    <i data-feather="calendar"></i>
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <div class="content has-margin-bottom-20">
+                                    <strong class="has-text-primary has-margin-bottom-10">Estrategia para la circulación de contenidos</strong>
+                                    <br>
+                                    <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
+                                        <span class="icon is-small"><i data-feather="clock"></i></span> 
+                                        <small>3:30pm</small>
+                                    </a>
+                                    <a href="/salas/auditorio" class="button is-small is-link is-outlined">
+                                        <span class="icon is-small"><i data-feather="users"></i></span> 
+                                        <small>Sala 1</small>
+                                    </a>
+                                </div>
+                                <div>
+                                    <strong>Tallerista:</strong>
+                                    <ul>
+                                        <li>Álvaro Barriga</li>
+                                        <li>Director creativo y socio fundador en Activa Marketing Communications
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="column is-12">
+                    <div class="box">
+                        <article class="media">
+                            <div class="media-left has-text-primary">
+                                <figure class="image is-64x64">
+                                    <i data-feather="calendar"></i>
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <div class="content has-margin-bottom-20">
+                                    <strong class="has-text-primary has-margin-bottom-10">Creación de nuevos formatos</strong>
+                                    <br>
+                                    <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
+                                        <span class="icon is-small"><i data-feather="clock"></i></span> 
+                                        <small>4:15pm</small>
+                                    </a>
+                                    <a href="/salas/auditorio" class="button is-small is-link is-outlined">
+                                        <span class="icon is-small"><i data-feather="users"></i></span> 
+                                        <small>Auditorio Principal</small>
+                                    </a>
+                                </div>
+                                <div>
+                                    <strong>Tallerista:</strong>
+                                    <ul>
+                                        <li>Arnau Gifreu</li>
+                                        <li>Asesor, productor y experto en proyectos de realidad expandida
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="column is-12">
+                    <div class="box">
+                        <article class="media">
+                            <div class="media-left has-text-primary">
+                                <figure class="image is-64x64">
+                                    <i data-feather="calendar"></i>
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <div class="content has-margin-bottom-20">
+                                    <strong class="has-text-primary has-margin-bottom-10">Contenidos hechos a la medida</strong>
+                                    <br>
+                                    <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
+                                        <span class="icon is-small"><i data-feather="clock"></i></span> 
+                                        <small>4:15pm</small>
+                                    </a>
+                                    <a href="/salas/auditorio" class="button is-small is-link is-outlined">
+                                        <span class="icon is-small"><i data-feather="users"></i></span> 
+                                        <small>Sala 1</small>
+                                    </a>
+                                </div>
+                                <div>
+                                    <strong>Tallerista:</strong>
+                                    <ul>
+                                        <li>Edwin Mejía</li>
+                                        <li>Co-creador de Internautismo Crónico y youtuber.
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="column is-12">
+                    <div class="box">
+                        <article class="media">
+                            <div class="media-left has-text-primary">
+                                <figure class="image is-64x64">
+                                    <i data-feather="calendar"></i>
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <div class="content has-margin-bottom-20">
+                                    <strong class="has-text-primary has-margin-bottom-10">Nuevos estándares en la producción de contenidos</strong>
+                                    <br>
+                                    <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
+                                        <span class="icon is-small"><i data-feather="clock"></i></span> 
+                                        <small>4:15pm</small>
+                                    </a>
+                                    <a href="/salas/auditorio" class="button is-small is-link is-outlined">
+                                        <span class="icon is-small"><i data-feather="users"></i></span> 
+                                        <small>Sala 2</small>
+                                    </a>
+                                </div>
+                                <div>
+                                    <strong>Tallerista:</strong>
+                                    <ul>
+                                        <li>Mauricio Tamayo</li>
+                                        <li>Líder de productores delegados en Señal Colombia
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="column is-12">
+                    <div class="box">
+                        <article class="media">
+                            <div class="media-left has-text-primary">
+                                <figure class="image is-64x64">
+                                    <i data-feather="calendar"></i>
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <div class="content has-margin-bottom-20">
+                                    <strong class="has-text-primary has-margin-bottom-10">Video mejores momentos</strong>
+                                    <br>
+                                    <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
+                                        <span class="icon is-small"><i data-feather="clock"></i></span> 
+                                        <small>5:00pm</small>
+                                    </a>
+                                    <a href="/salas/auditorio" class="button is-small is-link is-outlined">
+                                        <span class="icon is-small"><i data-feather="users"></i></span> 
+                                        <small>Auditorio Principal</small>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="column is-12">
+                    <div class="box">
+                        <article class="media">
+                            <div class="media-left has-text-primary">
+                                <figure class="image is-64x64">
+                                    <i data-feather="calendar"></i>
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <div class="content has-margin-bottom-20">
+                                    <strong class="has-text-primary has-margin-bottom-10">Selección de contenidos de medios públicos en la pandemia</strong>
+                                    <br>
+                                    <a href="/salas/auditorio" class="button is-small is-primary is-outlined">
+                                        <span class="icon is-small"><i data-feather="clock"></i></span> 
+                                        <small>5:03pm</small>
+                                    </a>
+                                    <a href="/salas/auditorio" class="button is-small is-link is-outlined">
+                                        <span class="icon is-small"><i data-feather="users"></i></span> 
+                                        <small>Auditorio Principal</small>
+                                    </a>
                                 </div>
                             </div>
                         </article>
