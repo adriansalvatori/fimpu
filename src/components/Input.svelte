@@ -5,8 +5,9 @@
  * 
  * Obtiene un objeto con el nombre del evento a despachar
 */	
-export let event //El evento que emitiremos
-export let room //La sala a la que emitiremos
+export let event, room, placeholder 
+
+if(placeholder === '') placeholder = "Escribe acá"
 
 const socket = io(window.location.host)
 
@@ -18,14 +19,25 @@ const handleSubmit = () => {
         message = ''
     }
 }
-
 </script>
 
-<div class="box is-full-width is-rounded">
-    <form action="">
-        <div class="columns">
-            <div class="column is-10"> <input type="text" class="input" placeholder="Escribe acá" bind:value="{message}"></div>
-            <div class="column is-2"><button on:click|preventDefault={handleSubmit} class="button"><span class="icon is-small"><i data-feather="send"></i></span></button></div>
+<style>
+    .button.is-circle {
+        border-radius: 321654px;
+        border-bottom-left-radius: 321654px !important;
+        border-top-left-radius: 321654px !important;
+        margin-left: -50%;
+        z-index: 9999999999 !important;
+    }
+</style>
+
+<form class="form is-full-width" action="">
+    <div class="field has-addons">
+        <div class="control is-expanded"><input type="text" class="input is-small is-rounded" placeholder="{placeholder}" bind:value="{message}"></div>
+        <div class="control">
+            <div class="item">
+                <button on:click|preventDefault={handleSubmit} class="button is-link is-small is-circle"><span class="icon is-small"><i data-feather="send"></i></span></button>
+            </div>
         </div>
-    </form>
-</div>
+    </div>
+</form>
